@@ -1,12 +1,14 @@
 require("dotenv").config();
 const express = require("express");
 const session = require("express-session");
-
+const MySQLStore = require("express-mysql-session")(session);
 const cors = require("cors");
 const app = express();
 
 // APP ALLOWS WHICH ORIGIN, TYPE OF REQUESTS, ALLOWED TO SUBMIT E.G FORM-DATA, MEDIA TYPE ETC.
 //
+const pool = require("./config/connection");
+const sessionStore = new MySQLStore({}, pool);
 
 app.use(
   cors({
@@ -28,8 +30,9 @@ app.use(
     secret: process.env.NODE_APP_SECRET_KEY,
     resave: false,
     saveUninitialized: false,
+    store: sessionStore,
     cookie: {
-      secure: false, // Set to true if using HTTPS
+      secure: false, // true if using HTTPS
       maxAge: 1000 * 60 * 60 * 24, // 1 day
     },
   })
@@ -37,6 +40,10 @@ app.use(
 
 // ABLE TO PARSE JSON DATA FROM BODY REQUESTS OJECT
 app.use(express.json());
+// ABLE TO PARSE application/x-www-form-urlencoded
+//This middleware function parses incoming requests with URL-encoded payloads
+// (i.e., data sent via application/x-www-form-urlencoded content type).
+app.use(express.urlencoded({ extended: true }));
 
 // API ROUTES
 // API routes
@@ -60,11 +67,6 @@ app.use(
   `/api/${process.env.NODE_APP_API_EMAILS}`,
   require("./routes/emailsRoutes")
 );
-
-// ABLE TO PARSE application/x-www-form-urlencoded
-//This middleware function parses incoming requests with URL-encoded payloads
-// (i.e., data sent via application/x-www-form-urlencoded content type).
-app.use(express.urlencoded({ extended: true }));
 
 // CHECKS IF RUNNING
 app.use((err, request, response, next) => {
