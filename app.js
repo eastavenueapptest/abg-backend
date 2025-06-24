@@ -10,15 +10,24 @@ const app = express();
 const pool = require("./config/connection");
 const sessionStore = new MySQLStore({}, pool);
 
+const allowedOrigins = [
+  "http://localhost:3000",
+  "http://localhost:8100",
+  "capacitor://localhost",
+  "ionic://localhost",
+];
+
 app.use(
   cors({
+    origin: (origin, callback) => {
+      // allow requests with no origin (like curl or Postman)
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
-    origin: [
-      "http://localhost:3000",
-      "http://localhost:8100",
-      "capacitor://localhost",
-      "ionic://localhost",
-    ],
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Origin", "X-Requested-With", "Content-Type", "Accept"],
   })
