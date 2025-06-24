@@ -1,0 +1,14 @@
+{
+  "build": {
+    "command": "npm install"
+  },
+  "start": {
+    "command": "node app.js",
+    "port": 3001
+  },
+  "plugins": {
+    "mysql": {
+      "enabled": true
+    }
+  }
+}
