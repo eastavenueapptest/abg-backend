@@ -39,26 +39,23 @@ app.use(
 app.use(express.json());
 
 // API ROUTES
+// API routes
 app.use(
   `/api/${process.env.NODE_APP_API_USERS}`,
   require("./routes/usersRoutes")
 );
-
 app.use(
   `/api/${process.env.NODE_APP_API_POSITIONS}`,
   require("./routes/positionsRoutes")
 );
-
 app.use(
   `/api/${process.env.NODE_APP_API_REQUESTS}`,
   require("./routes/requestsRoutes")
 );
-
 app.use(
   `/api/${process.env.NODE_APP_API_RESULTS}`,
   require("./routes/resultsRoutes")
 );
-
 app.use(
   `/api/${process.env.NODE_APP_API_EMAILS}`,
   require("./routes/emailsRoutes")
@@ -76,6 +73,6 @@ app.use((err, request, response, next) => {
 });
 
 // SERVER WILL LISTEN TO
-app.listen(process.env.NODE_APP_PORT || 3000, () =>
-  console.log(`server running on PORT ${process.env.NODE_APP_PORT}`)
+app.listen(process.env.NODE_APP_SERVER_PORT || 3000, () =>
+  console.log(`server running on PORT ${process.env.NODE_APP_SERVER_PORT}`)
 );
