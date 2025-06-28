@@ -20,7 +20,6 @@ const allowedOrigins = [
 app.use(
   cors({
     origin: (origin, callback) => {
-      // allow requests with no origin (like curl or Postman)
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
@@ -41,7 +40,8 @@ app.use(
     saveUninitialized: false,
     store: sessionStore,
     cookie: {
-      secure: false, // true if using HTTPS
+      sameSite: "none",
+      secure: true, // true if using HTTPS
       maxAge: 1000 * 60 * 60 * 24, // 1 day
     },
   })
