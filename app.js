@@ -40,8 +40,9 @@ app.use(
     saveUninitialized: false,
     store: sessionStore,
     cookie: {
-      sameSite: "none",
-      secure: true, // true if using HTTPS
+      secure: false,
+      sameSite: "lax",
+      httpOnly: true,
       maxAge: 1000 * 60 * 60 * 24, // 1 day
     },
   })
