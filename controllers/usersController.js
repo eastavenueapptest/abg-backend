@@ -117,7 +117,15 @@ exports.handleLoginUser = async (request, response, next) => {
 
     if (data) {
       request.session.user = { user: data };
-      response.status(201).json({ message: "Login successful" });
+      request.session.save((err) => {
+        if (err) {
+          console.error("Session save error:", err);
+          return response
+            .status(500)
+            .json({ message: "Failed to save session" });
+        }
+        response.status(201).json({ message: "Login successful" });
+      });
     } else {
       response.status(400).json({ message: "Invalid credentials" });
     }
