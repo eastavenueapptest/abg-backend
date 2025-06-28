@@ -8,7 +8,14 @@ const app = express();
 // APP ALLOWS WHICH ORIGIN, TYPE OF REQUESTS, ALLOWED TO SUBMIT E.G FORM-DATA, MEDIA TYPE ETC.
 //
 const pool = require("./config/connection");
-const sessionStore = new MySQLStore({}, pool);
+const sessionStore = new MySQLStore(
+  {
+    clearExpired: true,
+    checkExpirationInterval: 900000,
+    expiration: 86400000,
+  },
+  pool
+);
 
 const allowedOrigins = [
   "http://localhost:3000",
