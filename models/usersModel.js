@@ -15,10 +15,27 @@ class User extends Position {
   async save() {
     const salt = await bcrypt.genSalt();
     this.password = await bcrypt.hash(this.password, salt);
-    const query = `INSERT INTO USERS(users.username, users.password, users.employee_name, users.employee_number,users.position_id) 
-    VALUES('${this.username}','${this.password}', '${this.employeeName}', '${this.employeeNumber}', '${this.positionId}')`;
-    const rows = await database.execute(query);
-    return rows[0];
+
+    const [maxRows] = await database.execute(
+      `SELECT MAX(id) AS max_id FROM users`
+    );
+    const newId = (maxRows[0].max_id || 0) + 1;
+
+    const query = `
+    INSERT INTO users (id, username, password, employee_name, employee_number, position_id)
+    VALUES (?, ?, ?, ?, ?, ?)
+  `;
+
+    const [rows] = await database.execute(query, [
+      newId,
+      this.username,
+      this.password,
+      this.employeeName,
+      this.employeeNumber,
+      this.positionId,
+    ]);
+
+    return { insertId: newId };
   }
   static async viewById(id) {
     const targetId = await id;
