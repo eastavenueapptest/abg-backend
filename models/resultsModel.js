@@ -11,14 +11,20 @@ class Result {
   }
 
   async save() {
+    const [maxRows] = await database.execute(
+      `SELECT MAX(id) AS max_id FROM results`
+    );
+    const newId = (maxRows[0].max_id || 0) + 1;
+
     const insertQuery = `
-    INSERT INTO results (request_id, extracted_text, date_created)
-    VALUES (?, ?, NOW())`;
+    INSERT INTO results (id, request_id, extracted_text, date_created)
+    VALUES (?, ?, ?, NOW())`;
 
     const updateQuery = `
     UPDATE requests SET status = ?, rt_id = ? WHERE id = ?`;
 
     const [rows] = await database.execute(insertQuery, [
+      newId,
       this.requestId,
       JSON.stringify(this.extractedText),
     ]);

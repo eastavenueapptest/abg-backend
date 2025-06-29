@@ -19,25 +19,21 @@ class MedicalTest {
     this.fio2Route = fio2Route;
   }
   async save() {
-    //   code: 'ER_NO_DEFAULT_FOR_FIELD',
-    // errno: 1364,
-    // sql: '\n' +
-    //   '      INSERT INTO REQUESTS (\n' +
-    //   '        patient_name, age, sex, diagnosis,\n' +
-    //   '        requestor_id, physician_id, fio2_route,\n' +
-    //   '        status, date_created\n' +
-    //   '      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())',
-    // sqlState: 'HY000',
-    // sqlMessage: "Field 'rt_id' doesn't have a default value"
+    const [maxRows] = await database.execute(
+      `SELECT MAX(id) AS max_id FROM requests`
+    );
+    const newId = (maxRows[0].max_id || 0) + 1;
 
     const query = `
-      INSERT INTO REQUESTS (
-        patient_name, age, sex, diagnosis,
-        requestor_id, physician_id, fio2_route,
-        status, date_created
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())`;
+    INSERT INTO requests (
+      id, patient_name, age, sex, diagnosis,
+      requestor_id, physician_id, fio2_route,
+      status, date_created
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+  `;
 
     const values = [
+      newId,
       this.patientName ?? null,
       this.age ?? null,
       this.sex ?? null,
@@ -45,11 +41,11 @@ class MedicalTest {
       this.requestor ?? null,
       this.physician ?? null,
       this.fio2Route ?? null,
-      (this.status = 0),
+      0,
     ];
 
     const [rows] = await database.execute(query, values);
-    return rows;
+    return { insertId: newId, ...rows };
   }
 
   static async viewById(id) {
