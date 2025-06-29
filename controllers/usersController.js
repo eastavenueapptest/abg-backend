@@ -98,7 +98,21 @@ exports.handleChangepasswordUser = async (request, response, next) => {
     next(error);
   }
 };
+exports.handleLoggedUser = async (request, response, next) => {
+  try {
+    console.log("Session Data:", request.session);
+    console.log("User in Session:", request.session.user);
 
+    if (request.session && request.session.user) {
+      response.status(200).json({ user: request.session.user });
+    } else {
+      response.status(404).json({ message: "No user found in session" });
+    }
+  } catch (error) {
+    response.status(500).json({ message: error.message });
+    next(error);
+  }
+};
 exports.handleLoginUser = async (request, response, next) => {
   try {
     let data;
@@ -145,21 +159,6 @@ exports.handleLogoutUser = (request, response, next) => {
       }
       response.status(200).json({ message: "Logout successful" });
     });
-  } catch (error) {
-    response.status(500).json({ message: error.message });
-    next(error);
-  }
-};
-exports.handleLoggedUser = async (request, response, next) => {
-  try {
-    console.log("Session Data:", request.session);
-    console.log("User in Session:", request.session.user);
-
-    if (request.session && request.session.user) {
-      response.status(200).json({ user: request.session.user });
-    } else {
-      response.status(404).json({ message: "No user found in session" });
-    }
   } catch (error) {
     response.status(500).json({ message: error.message });
     next(error);
