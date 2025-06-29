@@ -24,6 +24,13 @@ const allowedOrigins = [
   "ionic://localhost",
 ];
 
+// ABLE TO PARSE JSON DATA FROM BODY REQUESTS OJECT
+app.use(express.json());
+// ABLE TO PARSE application/x-www-form-urlencoded
+//This middleware function parses incoming requests with URL-encoded payloads
+// (i.e., data sent via application/x-www-form-urlencoded content type).
+app.use(express.urlencoded({ extended: true }));
+
 app.use(
   cors({
     origin: (origin, callback) => {
@@ -54,13 +61,6 @@ app.use(
     },
   })
 );
-
-// ABLE TO PARSE JSON DATA FROM BODY REQUESTS OJECT
-app.use(express.json());
-// ABLE TO PARSE application/x-www-form-urlencoded
-//This middleware function parses incoming requests with URL-encoded payloads
-// (i.e., data sent via application/x-www-form-urlencoded content type).
-app.use(express.urlencoded({ extended: true }));
 
 // API ROUTES
 // API routes
