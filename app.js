@@ -12,7 +12,7 @@ const sessionStore = new MySQLStore(
   {
     clearExpired: true,
     checkExpirationInterval: 900000,
-    expiration: 86400000,
+    expiration: 1000 * 60 * 60 * 24 * 3,
   },
   pool
 );
