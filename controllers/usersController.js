@@ -103,8 +103,10 @@ exports.handleLoggedUser = async (request, response, next) => {
     console.log("Session Data:", request.session);
     console.log("User in Session:", request.session.user);
 
-    if (request.session && request.session.user) {
-      response.status(200).json({ user: request.session.user });
+    if (request.session) {
+      response
+        .status(200)
+        .json({ all: request.session, user: request.session.user });
     } else {
       response.status(404).json({ message: "No user found in session" });
     }
