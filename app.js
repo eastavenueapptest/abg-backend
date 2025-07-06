@@ -22,6 +22,7 @@ const allowedOrigins = [
   "http://localhost:8100",
   "capacitor://localhost",
   "ionic://localhost",
+  "https://abg-app-ui-production.up.railway.app",
 ];
 
 // ABLE TO PARSE JSON DATA FROM BODY REQUESTS OJECT
