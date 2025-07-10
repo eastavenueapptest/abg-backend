@@ -21,6 +21,7 @@ const allowedOrigins = [
   "http://localhost:3000",
   "http://localhost:8100",
   "capacitor://localhost",
+  "http://0.0.0.0",
   "ionic://localhost",
   "https://abg-app-ui-production.up.railway.app",
   "https://abg-app-ui-v1.onrender.com",
