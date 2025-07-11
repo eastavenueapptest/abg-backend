@@ -20,6 +20,7 @@ const sessionStore = new MySQLStore(
 const allowedOrigins = [
   "http://localhost:3000",
   "http://localhost:8100",
+  "https://localhost",
   "capacitor://localhost",
   "http://0.0.0.0",
   "ionic://localhost",
