@@ -1,0 +1,103 @@
+<div
+  style="font-size: 9px; border: 1px solid #000; padding: 20px; width: 100%; font-family: Arial, sans-serif;"
+>
+  <!-- Header -->
+  <div style="text-align: center; margin-bottom: 10px;">
+    <div
+      style="display: flex; justify-content: space-around; align-items: center;"
+    >
+      <img
+        src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Department_of_Health_%28DOH%29_PHL.svg/1200px-Department_of_Health_%28DOH%29_PHL.svg.png"
+        alt="DOH Logo"
+        style="width: 50px; height: 50px; border-radius: 50%;"
+      />
+      <div>
+        <strong>Republic of the Philippines</strong><br />
+        <strong>DEPARTMENT OF HEALTH</strong><br />
+        <strong>East Avenue Medical Center</strong><br />
+        <br />
+        <strong>PULMONARY SECTION</strong><br />
+        <strong style="text-decoration: underline;">ARTERIAL BLOOD GAS OFFICIAL
+          RESULT</strong>
+      </div>
+      <img
+        src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/East_Avenue_Medical_logo.svg/800px-East_Avenue_Medical_logo.svg.png"
+        alt="East Ave Logo"
+        style="width: 50px; height: 50px; border-radius: 50%;"
+      />
+    </div>
+  </div>
+
+  <!-- Meta -->
+  <div style="text-align: center; margin-bottom: 10px;">
+    <div style="border: 1px solid; display: inline-block; padding: 5px;">
+      <div>Reference Code: FM-MED-PUL-001</div>
+      <div>Rev No: 0</div>
+      <div>Date Effective: October 1, 2013</div>
+    </div>
+  </div>
+
+  <!-- Patient Info -->
+  <table
+    style="width: 100%; font-size: 9px; border-collapse: collapse; margin-bottom: 10px;"
+  >
+    <tr>
+      <td><strong>NAME:</strong> {{patient_name}}</td>
+      <td><strong>AGE/GENDER:</strong> {{age}} / {{sex}}</td>
+      <td><strong>DATE:</strong> {{date_created}}</td>
+    </tr>
+    <tr>
+      <td colspan="2"><strong>DIAGNOSIS:</strong> {{diagnosis}}</td>
+      <td><strong>PHYSICIAN:</strong> {{physician_doctor}}</td>
+    </tr>
+    <tr>
+      <td><strong>REQUESTED BY:</strong> {{requestor}}</td>
+      <td colspan="2"><strong>RESPIRATORY THERAPISTS:</strong>
+        {{respiratory_therapists}}</td>
+    </tr>
+  </table>
+
+  <!-- Lab Results -->
+  <table
+    style="width: 100%; font-size: 9px; border-collapse: collapse; text-align: left;"
+  >
+    <tr>
+      <th style="border: 1px solid;">pH</th>
+      <th style="border: 1px solid;">pCO2</th>
+      <th style="border: 1px solid;">PO2</th>
+      <th style="border: 1px solid;">HCO3</th>
+      <th style="border: 1px solid;">TCO2</th>
+      <th style="border: 1px solid;">BE</th>
+      <th style="border: 1px solid;">SO2</th>
+      <th style="border: 1px solid;">FiO2</th>
+    </tr>
+    <tr>
+      <td style="border: 1px solid;">{{extracted.pH}}</td>
+      <td style="border: 1px solid;">{{extracted.pCO2}}</td>
+      <td style="border: 1px solid;">{{extracted.PO2}}</td>
+      <td style="border: 1px solid;">{{extracted.HCO3}}</td>
+      <td style="border: 1px solid;">{{extracted.TCO2}}</td>
+      <td style="border: 1px solid;">{{extracted.BE}}</td>
+      <td style="border: 1px solid;">{{extracted.SO2}}</td>
+      <td style="border: 1px solid;">{{extracted.FIO2}}</td>
+    </tr>
+  </table>
+
+  <!-- Footer -->
+  <div style="margin-top: 20px; display: flex; justify-content: space-between;">
+    <div style="width: 45%; text-align: center;">
+      <strong>PREPARED BY</strong><br />
+      <div
+        style="border-bottom: 1px solid #000; height: 20px;"
+      >{{respiratory_therapists}}</div>
+      <small>RESPIRATORY THERAPISTS ON DUTY</small>
+    </div>
+    <div style="width: 45%; text-align: center;">
+      <strong>INTERPRETED BY</strong><br />
+      <div
+        style="border-bottom: 1px solid #000; height: 20px;"
+      >{{interpreted_by}}</div>
+      <small>PULMO CONSULTANT/PULMO RESIDENT</small>
+    </div>
+  </div>
+</div>
