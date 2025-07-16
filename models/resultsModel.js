@@ -21,7 +21,7 @@ class Result {
     VALUES (?, ?, ?, NOW())`;
 
     const updateQuery = `
-    UPDATE requests SET status = ?, rt_id = ? WHERE id = ?`;
+    UPDATE medical_requests SET status = ?, rt_id = ? WHERE id = ?`;
 
     const [rows] = await database.execute(insertQuery, [
       newId,
@@ -54,9 +54,9 @@ class Result {
   }
 
   static async viewById(id) {
-    const query = `SELECT results.request_id, results.extracted_text, requests.patient_name
+    const query = `SELECT results.request_id, results.extracted_text, medical_requests.patient_name
       FROM results
-      LEFT JOIN requests ON results.request_id = requests.id
+      LEFT JOIN medical_requests ON results.request_id = medical_requests.id
       WHERE results.id = ?`;
 
     const [rows, fields] = await database.execute(query, [id]);
@@ -69,15 +69,15 @@ class Result {
         results.id, 
         results.request_id, 
         results.date_created, 
-        requests.patient_name,
-        requests.status,
-        requests.diagnosis, 
+        medical_requests.patient_name,
+        medical_requests.status,
+        medical_requests.diagnosis, 
         a.employee_name AS requestor,
         b.employee_name AS physician_doctor
       FROM results 
-      LEFT JOIN requests ON results.request_id = requests.id 
-      LEFT JOIN users AS a ON requests.requestor_id = a.id 
-      LEFT JOIN users AS b ON requests.physician_id = b.id`;
+      LEFT JOIN medical_requests ON results.request_id = medical_requests.id 
+      LEFT JOIN users AS a ON medical_requests.requestor_id = a.id 
+      LEFT JOIN users AS b ON medical_requests.physician_id = b.id`;
 
     const [rows, fields] = await database.execute(query);
 
@@ -96,20 +96,20 @@ class Result {
         results.id, 
         results.request_id, 
         results.extracted_text, 
-        requests.patient_name,
-        requests.age,
-        requests.sex,
-        requests.status,
-        requests.diagnosis, 
+        medical_requests.patient_name,
+        medical_requests.age,
+        medical_requests.sex,
+        medical_requests.status,
+        medical_requests.diagnosis, 
         a.employee_name AS requestor,
         b.employee_name AS physician_doctor,
         c.employee_name AS respiratory_therapists
 
       FROM results 
-      JOIN requests ON results.request_id = requests.id 
-      JOIN users AS a ON requests.requestor_id = a.id 
-      JOIN users AS b ON requests.physician_id = b.id 
-      JOIN users AS c ON requests.rt_id = c.id 
+      JOIN medical_requests ON results.request_id = medical_requests.id 
+      JOIN users AS a ON medical_requests.requestor_id = a.id 
+      JOIN users AS b ON medical_requests.physician_id = b.id 
+      JOIN users AS c ON medical_requests.rt_id = c.id 
       WHERE results.request_id = ?`;
 
     const [rows, fields] = await database.execute(query, [id]);

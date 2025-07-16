@@ -3,7 +3,6 @@ const Result = require("../models/resultsModel");
 require("dotenv").config();
 exports.sendAbgFormEmail = async (request, response) => {
   const { id, interpreted_by } = request.body;
-  console.log("requests: ", request.body);
   try {
     const data = await Result.viewResultFormById(id);
     if (!data) {

@@ -100,9 +100,6 @@ exports.handleChangepasswordUser = async (request, response, next) => {
 };
 exports.handleLoggedUser = async (request, response, next) => {
   try {
-    console.log("Session Data:", request.session);
-    console.log("User in Session:", request.session.user);
-
     if (request.session) {
       response
         .status(200)
