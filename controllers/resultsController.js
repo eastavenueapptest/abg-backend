@@ -33,7 +33,6 @@ exports.handleNewResult = async (request, response, next) => {
 exports.handleFetchResultById = async (request, response, next) => {
   try {
     const { id } = request.params;
-    console.log(id);
     const data = await Result.viewById(id);
     response.status(201).json(data);
   } catch (error) {

@@ -33,15 +33,6 @@ exports.handleNewMedicalTest = async (request, response, next) => {
       physician,
       fio2Route
     );
-    console.log({
-      patient: patientName,
-      age: age,
-      sex: sex,
-      diagnosis: diagnosis,
-      requestor: requestor,
-      physician: physician,
-      fio2Route: fio2Route,
-    });
 
     if (
       !patientName ||
