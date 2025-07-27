@@ -11,7 +11,7 @@ exports.sendAbgFormEmail = async (request, response) => {
 
     const mailOptions = {
       from: process.env.NODE_APP_GOOGLE_EMAIL,
-      to: "acecruz14.e@gmail.com",
+      to: "anne.she00@gmail.com",
       subject: "ABG ResultForm Submission",
       template: "abgform",
       context: {

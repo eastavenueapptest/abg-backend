@@ -4,14 +4,15 @@
       html body { box-sizing: border-box; padding: 2em; margin: 0;
       background-color: #ddebe0; } .email-content { box-shadow: 0px 8px 8px
       rgba(0, 0, 0, 0.2); background-color: white; border-radius: 10px;
-      max-width: 500px; } .email-header { background: #2a7b9b; background:
+      max-width: 500px; width: 500px; margin: auto; border: 1px solid rgba(0, 0,
+      0, 0.2) } .email-header { background: #2a7b9b; background:
       linear-gradient( 90deg, rgba(42, 123, 155, 1) 0%, rgba(87, 199, 133, 1)
-      50%, rgba(237, 221, 83, 1) 100% ); height: 150px; width: 100%;
+      50%, rgba(237, 221, 83, 1) 100% ); padding: 2em 0px; width: 100%;
       border-bottom: 0.5em solid green; border-top-left-radius: 5px;
       border-top-right-radius: 5px; } .email-header div { text-align: center;
-      position: relative; z-index: 1; margin: auto; height: 150px; }
-      .email-header div::after { content: ""; position: absolute; width: 100%;
-      height: 100%; bottom: 0; left: 100; background-image:
+      position: relative; z-index: 1; margin: auto; } .email-header div::after {
+      content: ""; position: absolute; width: 100%; height: 100%; bottom: 0;
+      left: 100; background-image:
       url("https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/East_Avenue_Medical_logo.svg/2048px-East_Avenue_Medical_logo.svg.png");
       background-size: contain; background-repeat: no-repeat;
       background-position: center; opacity: 0.05; pointer-events: none; z-index:
@@ -35,7 +36,10 @@
       <div class="email-header">
         <div>
           <span>
-            <img src="../media//lines.png" alt="east-avenue-logo" />
+            <img
+              src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/East_Avenue_Medical_logo.svg/800px-East_Avenue_Medical_logo.svg.png"
+              alt="east-avenue-logo"
+            />
             ABG RESULTS
           </span>
         </div>
