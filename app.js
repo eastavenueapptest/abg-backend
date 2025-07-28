@@ -24,8 +24,7 @@ const allowedOrigins = [
   "capacitor://localhost",
   "http://0.0.0.0",
   "ionic://localhost",
-  "https://abg-app-ui-production.up.railway.app",
-  "https://abg-app-ui-v1.onrender.com",
+  "https://abgp-frontend-production.up.railway.app",
 ];
 
 app.use(express.json());
