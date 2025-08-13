@@ -2,7 +2,7 @@ const transporter = require("../utils/emailUtils");
 const Result = require("../models/resultsModel");
 require("dotenv").config();
 exports.sendAbgFormEmail = async (request, response) => {
-  const { id, interpreted_by } = request.body;
+  const { id } = request.body;
   try {
     const data = await Result.viewResultFormById(id);
     if (!data) {
@@ -15,7 +15,7 @@ exports.sendAbgFormEmail = async (request, response) => {
       subject: "ABG ResultForm Submission",
       template: "abgform",
       context: {
-        patient_name: data.patient_name,
+        patient_name: data?.patient_name,
       },
     };
     await transporter.sendMail(mailOptions);
