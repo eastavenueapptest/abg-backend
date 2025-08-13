@@ -45,7 +45,6 @@ exports.handleNewMedicalTest = async (request, response, next) => {
     ) {
       return response.status(400).json({ message: "All fields are required." });
     }
-
     const data = await inputs.save();
 
     response.status(201).json(data);

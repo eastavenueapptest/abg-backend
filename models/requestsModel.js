@@ -79,8 +79,7 @@ class MedicalTest {
     medical_requests.sex='${inputData.sex}', 
     medical_requests.diagnosis='${inputData.diagnosis}',
     medical_requests.physician_id='${inputData.physician}',
-    medical_requests.fio2_route='${inputData.fio2Route}',
-    medical_requests.status='${inputData.status}'  WHERE medical_requests.id=${targetId}`;
+    medical_requests.fio2_route='${inputData.fio2Route}' WHERE medical_requests.id=${targetId}`;
     const [rows, fields] = await database.execute(query);
     return rows;
   }
