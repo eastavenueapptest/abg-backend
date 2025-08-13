@@ -123,7 +123,7 @@ class Result {
       JOIN users AS a ON medical_requests.requestor_id = a.id 
       JOIN users AS b ON medical_requests.physician_id = b.id 
       JOIN users AS c ON medical_requests.rt_id = c.id 
-      WHERE results.request_id = ?`;
+      WHERE results.id = ?`;
 
     const [rows, fields] = await database.execute(query, [id]);
     return rows[0];
