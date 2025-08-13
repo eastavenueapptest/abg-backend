@@ -50,6 +50,17 @@ exports.handleFetchResultFormById = async (request, response, next) => {
     next(error);
   }
 };
+exports.handleUpdateInterpretation = async (request, response, next) => {
+  try {
+    const { id } = request.params;
+    const newData = request.body;
+    const data = await Result.updateByInterPreration(id, newData);
+    response.status(201).json(data);
+  } catch (error) {
+    console.log("Error");
+    next(error);
+  }
+};
 exports.handleUpdateResultById = async (request, response, next) => {
   try {
     const { id } = request.params;

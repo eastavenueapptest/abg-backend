@@ -53,6 +53,17 @@ class Result {
     return rows;
   }
 
+  static async updateByInterPreration(id, data) {
+    const query = `UPDATE results SET interpreted_by = ?, interpreted_message = ? WHERE id = ?`;
+
+    const [rows, fields] = await database.execute(query, [
+      data?.interpreted_by,
+      data?.interpreted_message,
+      id,
+    ]);
+    return rows;
+  }
+
   static async viewById(id) {
     const query = `SELECT results.request_id, results.extracted_text, medical_requests.patient_name
       FROM results
@@ -96,6 +107,8 @@ class Result {
         results.id, 
         results.request_id, 
         results.extracted_text, 
+        results.interpreted_by,
+        results.interpreted_message,
         medical_requests.patient_name,
         medical_requests.age,
         medical_requests.sex,

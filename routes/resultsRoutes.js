@@ -10,7 +10,8 @@ router
 
 router
   .route("/view-medical-report-form/:id")
-  .get(resultsController.handleFetchResultFormById);
+  .get(resultsController.handleFetchResultFormById)
+  .put(resultsController.handleUpdateInterpretation);
 
 router
   .route("/")
