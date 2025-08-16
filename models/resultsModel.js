@@ -4,7 +4,7 @@ const { getDateFormat } = require("../utils/dateUtils.js");
 const database = require("../config/connection.js");
 
 class Result {
-  constructor(requestId, rtId, extractedText) {
+  constructor(requestId, rtId, extractedText, machineId) {
     this.requestId = requestId;
     this.rtId = rtId;
     this.extractedText = extractedText;
