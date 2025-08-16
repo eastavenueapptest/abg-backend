@@ -76,19 +76,30 @@ class Result {
 
   static async findAll() {
     const query = `
-      SELECT
+        SELECT  
         results.id, 
-        results.request_id, 
-        results.date_created, 
+        results.request_id,
+        DATE_FORMAT(results.date_created, '%m/%d/%Y') AS date_created_formatted,
+        results.extracted_text, 
+        results.interpreted_by,
+        results.interpreted_message,
         medical_requests.patient_name,
+        medical_requests.age,
+        medical_requests.sex,
+        medical_requests.fio2_route,
         medical_requests.status,
         medical_requests.diagnosis, 
         a.employee_name AS requestor,
-        b.employee_name AS physician_doctor
+        b.employee_name AS physician_doctor,
+        c.employee_name AS respiratory_therapists
+
       FROM results 
-      LEFT JOIN medical_requests ON results.request_id = medical_requests.id 
-      LEFT JOIN users AS a ON medical_requests.requestor_id = a.id 
-      LEFT JOIN users AS b ON medical_requests.physician_id = b.id`;
+      JOIN medical_requests ON results.request_id = medical_requests.id 
+      JOIN users AS a ON medical_requests.requestor_id = a.id 
+      JOIN users AS b ON medical_requests.physician_id = b.id 
+      JOIN users AS c ON medical_requests.rt_id = c.id 
+      
+      ORDER BY results.id DESC`;
 
     const [rows, fields] = await database.execute(query);
 
@@ -123,7 +134,9 @@ class Result {
       JOIN users AS a ON medical_requests.requestor_id = a.id 
       JOIN users AS b ON medical_requests.physician_id = b.id 
       JOIN users AS c ON medical_requests.rt_id = c.id 
-      WHERE results.id = ?`;
+      WHERE results.id = ?
+      
+      ORDER BY results.id DESC`;
 
     const [rows, fields] = await database.execute(query, [id]);
     return rows[0];
