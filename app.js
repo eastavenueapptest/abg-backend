@@ -86,6 +86,10 @@ app.use(
   require("./routes/emailsRoutes")
 );
 
+app.use(
+  `/api/${process.env.NODE_APP_API_MACHINES}`,
+  require("./routes/machineRoutes")
+);
 // CHECKS IF RUNNING
 app.use((err, request, response, next) => {
   console.error(err);
