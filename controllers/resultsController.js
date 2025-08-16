@@ -15,13 +15,13 @@ exports.handleFetchResult = async (request, response, next) => {
 
 exports.handleNewResult = async (request, response, next) => {
   try {
-    const { requestId, rtId, extractedText } = request.body;
+    const { requestId, rtId, extractedText, machineId } = request.body;
 
-    if (!requestId || !extractedText || !rtId) {
+    if (!requestId || !extractedText || !rtId || !machineId) {
       return response.status(400).json({ message: "All fields are required." });
     }
 
-    const result = new Result(requestId, rtId, extractedText);
+    const result = new Result(requestId, rtId, extractedText, machineId);
     const data = await result.save();
 
     response.status(201).json(data);
@@ -30,6 +30,7 @@ exports.handleNewResult = async (request, response, next) => {
     next(error);
   }
 };
+
 exports.handleFetchResultById = async (request, response, next) => {
   try {
     const { id } = request.params;

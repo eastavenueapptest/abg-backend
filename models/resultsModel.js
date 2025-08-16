@@ -8,6 +8,7 @@ class Result {
     this.requestId = requestId;
     this.rtId = rtId;
     this.extractedText = extractedText;
+    this.machineId = machineId;
   }
 
   async save() {
@@ -17,8 +18,8 @@ class Result {
     const newId = (maxRows[0].max_id || 0) + 1;
 
     const insertQuery = `
-    INSERT INTO results (id, request_id, extracted_text, date_created)
-    VALUES (?, ?, ?, NOW())`;
+    INSERT INTO results (id, request_id, extracted_text, machine_id, date_created)
+    VALUES (?, ?, ?, ?, NOW())`;
 
     const updateQuery = `
     UPDATE medical_requests SET status = ?, rt_id = ? WHERE id = ?`;
@@ -27,6 +28,7 @@ class Result {
       newId,
       this.requestId,
       JSON.stringify(this.extractedText),
+      this.machineId,
     ]);
 
     if (rows.affectedRows > 0) {
