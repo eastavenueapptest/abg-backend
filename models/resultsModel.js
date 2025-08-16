@@ -122,6 +122,7 @@ class Result {
         results.extracted_text, 
         results.interpreted_by,
         results.interpreted_message,
+        results.machine_id, 
         medical_requests.patient_name,
         medical_requests.age,
         medical_requests.sex,
