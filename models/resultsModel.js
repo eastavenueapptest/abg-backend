@@ -76,35 +76,43 @@ class Result {
     return rows[0]?.type;
   }
 
-  static async findAll() {
+  static async findAll({ date = {}, sorting = "desc" } = {}) {
+    let whereClause = "";
+    const params = [];
+
+    if (date.from && date.to) {
+      whereClause = "WHERE DATE(results.date_created) BETWEEN ? AND ?";
+      params.push(date.from, date.to);
+    }
+    const sortDirection = sorting.toLowerCase() === "asc" ? "ASC" : "DESC";
     const query = `
-        SELECT  
-        results.id, 
-        results.request_id,
-        DATE_FORMAT(results.date_created, '%m/%d/%Y') AS date_created_formatted,
-        results.extracted_text, 
-        results.interpreted_by,
-        results.interpreted_message,        
-        results.machine_id, 
-        medical_requests.patient_name,
-        medical_requests.age,
-        medical_requests.sex,
-        medical_requests.fio2_route,
-        medical_requests.status,
-        medical_requests.diagnosis, 
-        a.employee_name AS requestor,
-        b.employee_name AS physician_doctor,
-        c.employee_name AS respiratory_therapists
+    SELECT  
+      results.id, 
+      results.request_id,
+      DATE_FORMAT(results.date_created, '%m/%d/%Y') AS date_created_formatted,
+      results.extracted_text, 
+      results.interpreted_by,
+      results.interpreted_message,        
+      results.machine_id, 
+      medical_requests.patient_name,
+      medical_requests.age,
+      medical_requests.sex,
+      medical_requests.fio2_route,
+      medical_requests.status,
+      medical_requests.diagnosis, 
+      a.employee_name AS requestor,
+      b.employee_name AS physician_doctor,
+      c.employee_name AS respiratory_therapists
+    FROM results 
+    JOIN medical_requests ON results.request_id = medical_requests.id 
+    JOIN users AS a ON medical_requests.requestor_id = a.id 
+    JOIN users AS b ON medical_requests.physician_id = b.id 
+    JOIN users AS c ON medical_requests.rt_id = c.id 
+    ${whereClause}
+    ORDER BY results.id ${sortDirection}
+  `;
 
-      FROM results 
-      JOIN medical_requests ON results.request_id = medical_requests.id 
-      JOIN users AS a ON medical_requests.requestor_id = a.id 
-      JOIN users AS b ON medical_requests.physician_id = b.id 
-      JOIN users AS c ON medical_requests.rt_id = c.id 
-      
-      ORDER BY results.id DESC`;
-
-    const [rows, fields] = await database.execute(query);
+    const [rows, fields] = await database.execute(query, params);
 
     const filteredRows = rows.map((item) => ({
       ...item,

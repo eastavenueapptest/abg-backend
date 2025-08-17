@@ -92,3 +92,19 @@ exports.handleDeleteMedicalTestById = async (request, response, next) => {
     next(error);
   }
 };
+
+exports.handleCountRequest = async (request, response, next) => {
+  try {
+    const { from, to } = request.query;
+
+    const data = await MedicalTest.countResult({
+      date: {
+        from,
+        to,
+      },
+    });
+    response.status(200).json(data);
+  } catch (error) {
+    next(error);
+  }
+};

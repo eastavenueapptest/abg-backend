@@ -89,5 +89,18 @@ class MedicalTest {
 
     return rows;
   }
+
+  static async countResult({ date = {} } = {}) {
+    let whereClause = "";
+    const params = [];
+    if (date.from && date.to) {
+      whereClause = "WHERE DATE(medical_requests.date_created) BETWEEN ? AND ?";
+      params.push(date.from, date.to);
+    }
+    const query = ` SELECT * FROM medical_requests ${whereClause}`;
+    const [rows, fields] = await database.execute(query, params);
+
+    return rows;
+  }
 }
 module.exports = MedicalTest;

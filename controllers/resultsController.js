@@ -2,10 +2,13 @@ const Result = require("../models/resultsModel");
 
 exports.handleFetchResult = async (request, response, next) => {
   try {
-    const { filters, sorting } = request.query;
+    const { from, to, sorting } = request.query;
     const data = await Result.findAll({
       sorting: sorting,
-      filters: filters,
+      date: {
+        from,
+        to,
+      },
     });
     response.status(200).json(data);
   } catch (error) {
