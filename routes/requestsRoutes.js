@@ -3,6 +3,9 @@ const router = express.Router();
 const requestsController = require("../controllers/requestsController");
 
 router.route("/count-requests").get(requestsController.handleCountRequest);
+router
+  .route("/update-status/:id")
+  .put(requestsController.handleUpdateStatusRequest);
 
 router
   .route("/")

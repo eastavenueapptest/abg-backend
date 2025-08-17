@@ -1,5 +1,20 @@
+const { response } = require("express");
 const MedicalTest = require("../models/requestsModel");
 
+exports.handleUpdateStatusRequest = async (request, response, next) => {
+  try {
+    const { id } = request.params;
+    const incomingwData = request.body;
+    const newData = {
+      status: incomingwData.status,
+    };
+    const data = await MedicalTest.updateStatusRequestById(id, newData);
+    response.status(201).json(data);
+  } catch (error) {
+    console.log("Error");
+    next(error);
+  }
+};
 exports.handleFetchMedicalTest = async (request, response, next) => {
   try {
     const { filters, sorting } = request.query;
