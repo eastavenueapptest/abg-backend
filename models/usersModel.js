@@ -22,8 +22,8 @@ class User extends Position {
     const newId = (maxRows[0].max_id || 0) + 1;
 
     const query = `
-    INSERT INTO users (id, username, password, employee_name, employee_number, position_id)
-    VALUES (?, ?, ?, ?, ?, ?)
+    INSERT INTO users (id, username, password, employee_name, employee_number, position_id, is_deleted)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
   `;
 
     const [rows] = await database.execute(query, [
@@ -33,6 +33,7 @@ class User extends Position {
       this.employeeName,
       this.employeeNumber,
       this.positionId,
+      0,
     ]);
 
     return { insertId: newId };
@@ -44,12 +45,15 @@ class User extends Position {
     rows[0].position_name = await User.positionById(rows[0].position_id);
     return rows;
   }
-  static async deleteById(id) {
-    const targetId = id;
-    const query = `DELETE FROM users WHERE users.id=${targetId}`;
+
+  static async deleteById(id, data) {
+    const targetId = await id;
+    const inputData = await data;
+    const query = `UPDATE users set users.is_deleted=${inputData.is_deleted}  WHERE users.id=${targetId}`;
     const [rows, fields] = await database.execute(query);
     return rows;
   }
+
   static async changePasswordById(id, data) {
     const targetId = await id;
     const inputData = await data;
@@ -98,7 +102,7 @@ class User extends Position {
         users.position_id,
         job_positions.type AS position_name
       FROM users
-      JOIN job_positions ON users.position_id = job_positions.id
+      JOIN job_positions ON users.position_id = job_positions.id WHERE users.is_deleted = FALSE
     `;
 
     const [rows, fields] = await database.execute(query);
@@ -106,19 +110,19 @@ class User extends Position {
   }
 
   static async findRT() {
-    const query = `SELECT users.id, users.employee_name, users.employee_number FROM users WHERE users.position_id IN (2)`;
+    const query = `SELECT users.id, users.employee_name, users.employee_number FROM users WHERE users.position_id IN (2) AND users.is_deleted = FALSE`;
     const [rows, fields] = await database.execute(query);
     return rows;
   }
   static async findPhysician() {
-    const query = `SELECT users.id, users.employee_name, users.employee_number FROM users WHERE users.position_id IN (3, 4)`;
+    const query = `SELECT users.id, users.employee_name, users.employee_number FROM users WHERE users.position_id IN (3, 4) AND users.is_deleted = FALSE`;
     const [rows, fields] = await database.execute(query);
     return rows;
   }
   static async mobileAuth(data) {
     const inputData = await data;
     const query =
-      "SELECT * FROM users WHERE users.username = ? AND users.position_id IN (2,5)";
+      "SELECT * FROM users WHERE users.username = ? AND users.position_id IN (2,5) AND users.is_deleted = FALSE";
     const [rows, fields] = await database.execute(query, [inputData.username]);
     const filteredRows = rows.filter((row) => !Buffer.isBuffer(row._buff));
     if (filteredRows.length === 0) {
@@ -155,7 +159,7 @@ class User extends Position {
   }
   static async auth(data) {
     const inputData = await data;
-    const query = `SELECT * FROM users WHERE users.username = '${inputData.username}'`;
+    const query = `SELECT * FROM users WHERE users.username = '${inputData.username}' AND users.is_deleted = FALSE`;
     const [rows, fields] = await database.execute(query);
     const filteredRows = rows.filter((row) => !Buffer.isBuffer(row._buff));
 

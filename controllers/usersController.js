@@ -72,7 +72,8 @@ exports.handleUpdateUserById = async (request, response, next) => {
 exports.handleDeleteUserById = async (request, response, next) => {
   try {
     const { id } = request.params;
-    const data = await User.deleteById(id);
+    const { is_deleted } = request.body;
+    const data = await User.deleteById(id, { is_deleted });
     response.status(201).json(data);
   } catch (error) {
     next(error);
