@@ -29,7 +29,7 @@ class MedicalTest {
       id, patient_name, age, sex, diagnosis,
       requestor_id, physician_id, fio2_route,
       status, is_deleted, date_created
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
   `;
 
     const values = [
