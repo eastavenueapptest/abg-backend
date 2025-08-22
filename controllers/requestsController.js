@@ -27,7 +27,7 @@ exports.handleFetchMedicalTest = async (request, response, next) => {
     next(error);
   }
 };
-exports.handleDeleteRequestById = async (request, response, next) => {
+exports.handleDeleteMedicalTestById = async (request, response, next) => {
   try {
     const { id } = request.params;
     const { is_deleted } = request.body;
@@ -100,16 +100,6 @@ exports.handleUpdateMedicalTestById = async (request, response, next) => {
       fio2Route: incomingwData.fio2_route,
     };
     const data = await MedicalTest.updateById(id, newData);
-    response.status(201).json(data);
-  } catch (error) {
-    console.log("Error");
-    next(error);
-  }
-};
-exports.handleDeleteMedicalTestById = async (request, response, next) => {
-  try {
-    const { id } = request.params;
-    const data = await Request.deleteById(id);
     response.status(201).json(data);
   } catch (error) {
     console.log("Error");

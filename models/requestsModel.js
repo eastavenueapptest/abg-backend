@@ -28,7 +28,7 @@ class MedicalTest {
     INSERT INTO medical_requests (
       id, patient_name, age, sex, diagnosis,
       requestor_id, physician_id, fio2_route,
-      status, date_created
+      status, is_deleted, date_created
     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
   `;
 
@@ -42,6 +42,7 @@ class MedicalTest {
       this.physician ?? null,
       this.fio2Route ?? null,
       1,
+      0,
     ];
 
     const [rows] = await database.execute(query, values);
@@ -58,7 +59,8 @@ class MedicalTest {
     medical_requests.requestor_id, 
     medical_requests.physician_id, 
     medical_requests.fio2_route,  
-    medical_requests.status 
+    medical_requests.status,
+    medical_requests.is_deleted 
     FROM medical_requests WHERE medical_requests.id=${targetId}`;
     const [rows, fields] = await database.execute(query);
     return rows;
