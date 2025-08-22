@@ -84,6 +84,14 @@ class MedicalTest {
     return rows;
   }
 
+  static async deleteById(id, data) {
+    const targetId = await id;
+    const inputData = await data;
+    const query = `UPDATE medical_requests set medical_requests.is_deleted=${inputData.is_deleted}  WHERE medical_requests.id=${targetId}`;
+    const [rows, fields] = await database.execute(query);
+    return rows;
+  }
+
   static async findAll() {
     const query = `SELECT * FROM medical_requests ORDER BY medical_requests.date_created DESC`;
     const [rows, fields] = await database.execute(query);

@@ -40,7 +40,7 @@ class User extends Position {
   }
   static async viewById(id) {
     const targetId = await id;
-    const query = `SELECT users.username,users.employee_name,users.employee_number, users.position_id FROM users WHERE users.id=${targetId}`;
+    const query = `SELECT users.username,users.employee_name,users.employee_number, users.position_id, users.is_deleted FROM users WHERE users.id=${targetId}`;
     const [rows, fields] = await database.execute(query);
     rows[0].position_name = await User.positionById(rows[0].position_id);
     return rows;
@@ -100,9 +100,10 @@ class User extends Position {
         users.employee_name,
         users.employee_number,
         users.position_id,
+        users.is_deleted,
         job_positions.type AS position_name
       FROM users
-      JOIN job_positions ON users.position_id = job_positions.id WHERE users.is_deleted = FALSE
+      JOIN job_positions ON users.position_id = job_positions.id
     `;
 
     const [rows, fields] = await database.execute(query);

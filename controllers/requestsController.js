@@ -27,7 +27,16 @@ exports.handleFetchMedicalTest = async (request, response, next) => {
     next(error);
   }
 };
-
+exports.handleDeleteRequestById = async (request, response, next) => {
+  try {
+    const { id } = request.params;
+    const { is_deleted } = request.body;
+    const data = await MedicalTest.deleteById(id, { is_deleted });
+    response.status(201).json(data);
+  } catch (error) {
+    next(error);
+  }
+};
 exports.handleNewMedicalTest = async (request, response, next) => {
   try {
     const {
