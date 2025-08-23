@@ -123,7 +123,7 @@ class User extends Position {
   static async mobileAuth(data) {
     const inputData = await data;
     const query =
-      "SELECT users.*, positions.type as position_name  FROM users LEFT JOIN positions ON users.position_id = positions.id WHERE users.username = ? AND users.position_id IN (2,5) AND users.is_deleted = FALSE";
+      "SELECT users.*, job_positions.type as position_name  FROM users LEFT JOIN job_positions ON users.position_id = job_positions.id WHERE users.username = ? AND users.position_id IN (2,5) AND users.is_deleted = FALSE";
     const [rows, fields] = await database.execute(query, [inputData.username]);
     const filteredRows = rows.filter((row) => !Buffer.isBuffer(row._buff));
     if (filteredRows.length === 0) {
@@ -160,7 +160,7 @@ class User extends Position {
   }
   static async auth(data) {
     const inputData = await data;
-    const query = `SELECT users.*, positions.type as position_name  FROM users LEFT JOIN positions ON users.position_id = positions.id WHERE users.username = '${inputData.username}' AND users.is_deleted = FALSE`;
+    const query = `SELECT users.*, job_positions.type as position_name  FROM users LEFT JOIN job_positions ON users.position_id = job_positions.id WHERE users.username = '${inputData.username}' AND users.is_deleted = FALSE`;
     const [rows, fields] = await database.execute(query);
     const filteredRows = rows.filter((row) => !Buffer.isBuffer(row._buff));
 
