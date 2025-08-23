@@ -95,7 +95,7 @@ class MedicalTest {
   }
 
   static async findAll() {
-    const query = `SELECT * FROM medical_requests ORDER BY medical_requests.date_created DESC`;
+    const query = `SELECT medical_requests.*,  DATE_FORMAT(medical_requests.date_created, '%m/%d/%Y') AS date_created_formatted FROM medical_requests ORDER BY medical_requests.date_created DESC`;
     const [rows, fields] = await database.execute(query);
 
     return rows;
