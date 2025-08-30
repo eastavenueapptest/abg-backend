@@ -89,17 +89,22 @@ class Result {
     SELECT  
       results.id, 
       results.request_id,
-      DATE_FORMAT(results.date_created, '%m/%d/%Y') AS date_created_formatted,
+      DATE_FORMAT(medical_requests.date_created, '%m/%d/%Y') AS medical_requests_date_created_formatted,
+      TIME_FORMAT(medical_requests.date_created, '%h:%i %p') AS medical_requests_time_only,
+      DATE_FORMAT(results.date_created, '%m/%d/%Y %h:%i %p') AS results_date_created_formatted,
+      TIME_FORMAT(SEC_TO_TIME(TIMESTAMPDIFF(SECOND, medical_requests.date_created, results.date_created)), '%H:%i') AS turnaround_time_hh_mm,
       results.extracted_text, 
       results.interpreted_by,
       results.interpreted_message,        
       results.machine_id, 
+      results.is_determined,
       medical_requests.patient_name,
       medical_requests.age,
       medical_requests.sex,
       medical_requests.fio2_route,
       medical_requests.status,
-      medical_requests.diagnosis, 
+      medical_requests.diagnosis,
+      machines.machine_name, 
       a.employee_name AS requestor,
       b.employee_name AS physician_doctor,
       c.employee_name AS respiratory_therapists
@@ -108,8 +113,9 @@ class Result {
     JOIN users AS a ON medical_requests.requestor_id = a.id 
     JOIN users AS b ON medical_requests.physician_id = b.id 
     JOIN users AS c ON medical_requests.rt_id = c.id 
+    JOIN machines ON results.machine_id = machines.id
     ${whereClause}
-    ORDER BY results.id ${sortDirection}
+    ORDER BY medical_requests.date_created ${sortDirection}
   `;
 
     const [rows, fields] = await database.execute(query, params);

@@ -10,7 +10,11 @@ exports.handleFetchResult = async (request, response, next) => {
         to,
       },
     });
-    response.status(200).json(data);
+    const refinedData = data.map((item) => ({
+      ...item,
+      extracted_text: JSON.parse(item.extracted_text),
+    }));
+    response.status(200).json(refinedData);
   } catch (error) {
     next(error);
   }
