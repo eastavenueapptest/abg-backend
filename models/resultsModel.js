@@ -1,5 +1,8 @@
 const { getStatusLabel } = require("../utils/statusUtils.js");
 const { getDateFormat } = require("../utils/dateUtils.js");
+const {
+  getDateFormatToReadOnSQL,
+} = require("../utils/dateFormatToReadOnSQL.js");
 
 const database = require("../config/connection.js");
 
@@ -67,7 +70,6 @@ class Result {
     ]);
     return rows;
   }
-
   static async viewById(id) {
     const query = `SELECT results.request_id, results.extracted_text, medical_requests.patient_name
       FROM results
@@ -80,13 +82,26 @@ class Result {
 
   static async findAll({ date = {}, sorting = "desc" } = {}) {
     let whereClause = "";
+
+    function normalizeDateTime(str) {
+      if (!str) return null;
+      const parts = str.replace("T", " ").split(":");
+      if (parts.length === 2) {
+        return str.replace("T", " ") + ":00";
+      }
+      return str.replace("T", " ");
+    }
     const params = [];
     if (date.from && date.to) {
-      const fromDate = date.from.length === 16 ? date.from + ":00" : date.from;
-      const toDate = date.to.length === 16 ? date.to + ":00" : date.to;
-      console.log({ fromDate, toDate });
-      whereClause = "WHERE results.date_created BETWEEN ? AND ?";
-      params.push(fromDate, toDate);
+      const from = normalizeDateTime(date?.from);
+      const to = normalizeDateTime(date?.to);
+      console.log("before", from, to);
+      whereClause = `
+        WHERE CONVERT_TZ(results.date_created, '+00:00', '+08:00')
+        BETWEEN ? AND ?
+      `;
+
+      params.push(from, to);
     }
 
     const sortDirection = sorting.toLowerCase() === "asc" ? "ASC" : "DESC";
@@ -94,9 +109,24 @@ class Result {
     SELECT  
       results.id, 
       results.request_id,
-      DATE_FORMAT(medical_requests.date_created, '%m/%d/%Y') AS medical_requests_date_created_formatted,
-      TIME_FORMAT(medical_requests.date_created, '%h:%i %p') AS medical_requests_time_only,
-      DATE_FORMAT(results.date_created, '%m/%d/%Y %h:%i %p') AS results_date_created_formatted,
+      results.date_created,
+
+      DATE_FORMAT(
+      CONVERT_TZ(medical_requests.date_created, '+00:00', '+08:00'),
+        '%m/%d/%Y'
+      ) AS medical_requests_date_created_formatted,
+
+      TIME_FORMAT(
+        CONVERT_TZ(medical_requests.date_created, '+00:00', '+08:00'),
+        '%h:%i %p'
+      ) AS medical_requests_time_only,
+
+      DATE_FORMAT(
+        CONVERT_TZ(results.date_created, '+00:00', '+08:00'),
+        '%m/%d/%Y %h:%i %p'
+      ) AS results_date_created_formatted,
+       
+       
       TIME_FORMAT(SEC_TO_TIME(TIMESTAMPDIFF(SECOND, medical_requests.date_created, results.date_created)), '%H:%i') AS turnaround_time_hh_mm,
       results.extracted_text, 
       results.interpreted_by,
