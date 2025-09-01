@@ -25,7 +25,7 @@ exports.handleNewResult = async (request, response, next) => {
     const { requestId, rtId, extractedText, machineId, isDetermined } =
       request.body;
 
-    if (!requestId || !extractedText || !rtId || !machineId || isDetermined) {
+    if (!requestId || !extractedText || !rtId || !machineId || !isDetermined) {
       return response.status(400).json({ message: "All fields are required." });
     }
 
