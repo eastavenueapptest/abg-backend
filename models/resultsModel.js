@@ -79,11 +79,14 @@ class Result {
   static async findAll({ date = {}, sorting = "desc" } = {}) {
     let whereClause = "";
     const params = [];
-
     if (date.from && date.to) {
-      whereClause = "WHERE DATE(results.date_created) BETWEEN ? AND ?";
-      params.push(date.from, date.to);
+      const fromDate = date.from.length === 16 ? date.from + ":00" : date.from;
+      const toDate = date.to.length === 16 ? date.to + ":00" : date.to;
+      console.log({ fromDate, toDate });
+      whereClause = "WHERE results.date_created BETWEEN ? AND ?";
+      params.push(fromDate, toDate);
     }
+
     const sortDirection = sorting.toLowerCase() === "asc" ? "ASC" : "DESC";
     const query = `
     SELECT  

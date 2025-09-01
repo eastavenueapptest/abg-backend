@@ -264,7 +264,6 @@ class User extends Position {
               page: "dashboard",
               action: ["create", "read", "update", "delete"],
             },
-            ,
             {
               page: "medical-records",
               sub: [
