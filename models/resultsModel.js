@@ -19,7 +19,7 @@ class Result {
     const newId = (maxRows[0].max_id || 0) + 1;
 
     const insertQuery = `
-    INSERT INTO results (id, request_id, extracted_text, machine_id, date_created, is_determined)
+    INSERT INTO results (id, request_id, extracted_text, machine_id, is_determined, date_created)
     VALUES (?, ?, ?, ?, ?, NOW())`;
 
     const updateQuery = `
