@@ -100,7 +100,6 @@ class Result {
         WHERE CONVERT_TZ(results.date_created, '+00:00', '+08:00')
         BETWEEN ? AND ?
       `;
-
       params.push(from, to);
     }
 
@@ -125,7 +124,6 @@ class Result {
         CONVERT_TZ(results.date_created, '+00:00', '+08:00'),
         '%m/%d/%Y %h:%i %p'
       ) AS results_date_created_formatted,
-       
        
       TIME_FORMAT(SEC_TO_TIME(TIMESTAMPDIFF(SECOND, medical_requests.date_created, results.date_created)), '%H:%i') AS turnaround_time_hh_mm,
       results.extracted_text, 
