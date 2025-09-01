@@ -4,11 +4,12 @@ const { getDateFormat } = require("../utils/dateUtils.js");
 const database = require("../config/connection.js");
 
 class Result {
-  constructor(requestId, rtId, extractedText, machineId) {
+  constructor(requestId, rtId, extractedText, machineId, isDetermined) {
     this.requestId = requestId;
     this.rtId = rtId;
     this.extractedText = extractedText;
     this.machineId = machineId;
+    this.isDetermined = isDetermined;
   }
 
   async save() {
@@ -18,8 +19,8 @@ class Result {
     const newId = (maxRows[0].max_id || 0) + 1;
 
     const insertQuery = `
-    INSERT INTO results (id, request_id, extracted_text, machine_id, date_created)
-    VALUES (?, ?, ?, ?, NOW())`;
+    INSERT INTO results (id, request_id, extracted_text, machine_id, date_created, is_determined)
+    VALUES (?, ?, ?, ?, ?, NOW())`;
 
     const updateQuery = `
     UPDATE medical_requests SET status = ?, rt_id = ? WHERE id = ?`;
@@ -29,6 +30,7 @@ class Result {
       this.requestId,
       JSON.stringify(this.extractedText),
       this.machineId,
+      this.isDetermined,
     ]);
 
     if (rows.affectedRows > 0) {
