@@ -4,13 +4,21 @@ const bcrypt = require("bcryptjs");
 const Position = require("./positionsModel.js");
 
 class User extends Position {
-  constructor(positionId, username, password, employeeName, employeeNumber) {
+  constructor(
+    positionId,
+    username,
+    password,
+    employeeName,
+    employeeNumber,
+    emailAddress
+  ) {
     super();
     this.positionId = positionId;
     this.username = username;
     this.password = password;
     this.employeeName = employeeName;
     this.employeeNumber = employeeNumber;
+    this.emailAddress = emailAddress;
   }
   async save() {
     const salt = await bcrypt.genSalt();
@@ -22,8 +30,8 @@ class User extends Position {
     const newId = (maxRows[0].max_id || 0) + 1;
 
     const query = `
-    INSERT INTO users (id, username, password, employee_name, employee_number, position_id, is_deleted)
-    VALUES (?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO users (id, username, password, employee_name, employee_number, position_id, is_deleted, email_address)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
   `;
 
     const [rows] = await database.execute(query, [
@@ -34,13 +42,20 @@ class User extends Position {
       this.employeeNumber,
       this.positionId,
       0,
+      this.emailAddress,
     ]);
 
     return { insertId: newId };
   }
+  static async searchByUsername(username) {
+    const targetUsername = await username;
+    const query = `SELECT users.username,users.employee_name, users.email_address FROM users WHERE users.username='${targetUsername}'`;
+    const [rows, fields] = await database.execute(query);
+    return rows;
+  }
   static async viewById(id) {
     const targetId = await id;
-    const query = `SELECT users.username,users.employee_name,users.employee_number, users.position_id, users.is_deleted FROM users WHERE users.id=${targetId}`;
+    const query = `SELECT users.username,users.employee_name,users.employee_number, users.position_id, users.email_address, users.temp_key, users.is_deleted FROM users WHERE users.id=${targetId}`;
     const [rows, fields] = await database.execute(query);
     rows[0].position_name = await User.positionById(rows[0].position_id);
     return rows;
@@ -87,6 +102,13 @@ class User extends Position {
     const [rows, fields] = await database.execute(query);
     return rows;
   }
+  static async setupSecretKey(id, data) {
+    const targetId = await id;
+    const inputData = await data;
+    const query = `UPDATE users set users.temp_key='${inputData.key}' WHERE users.username='${targetId}'`;
+    const [rows, fields] = await database.execute(query);
+    return rows;
+  }
   static async usersPosition(id) {
     const targetId = await id;
     const result = await User.positionById(targetId);
@@ -100,6 +122,7 @@ class User extends Position {
         users.employee_name,
         users.employee_number,
         users.position_id,
+        users.email_address,
         users.is_deleted,
         job_positions.type AS position_name
       FROM users
@@ -289,6 +312,34 @@ class User extends Position {
       filteredRows[0].password
     );
     return isMatched ? filteredRows[0] : false;
+  }
+  static async viewBySecretKey(secretkey, data) {
+    const targetkey = secretkey;
+    const inputData = data;
+
+    if (!targetkey || typeof inputData?.password !== "string") {
+      throw new Error("Invalid ID or password");
+    }
+
+    const query = `
+    SELECT id, username, employee_name, employee_number,
+           position_id, email_address, temp_key, is_deleted
+    FROM users
+    WHERE TRIM(temp_key) = ?`;
+
+    const [rows] = await database.execute(query, [targetkey]);
+
+    const salt = await bcrypt.genSalt();
+    const encryptedPassword = await bcrypt.hash(inputData.password, salt);
+    if ((await rows[0]?.temp_key) === targetkey) {
+      const [updateResult] = await database.execute(
+        "UPDATE users SET password = ?, temp_key = '' WHERE id = ?",
+        [encryptedPassword, rows[0]?.id]
+      );
+      return updateResult;
+    } else {
+      return null;
+    }
   }
 }
 module.exports = User;

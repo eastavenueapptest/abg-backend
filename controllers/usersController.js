@@ -15,14 +15,21 @@ exports.handleFetchUser = async (request, response, next) => {
 
 exports.handleNewUser = async (request, response, next) => {
   try {
-    const { username, password, employeeName, employeeNumber, positionId } =
-      request.body;
+    const {
+      username,
+      password,
+      employeeName,
+      employeeNumber,
+      positionId,
+      emailAddress,
+    } = request.body;
     const user = new User(
       positionId,
       username,
       password,
       employeeName,
-      employeeNumber
+      employeeNumber,
+      emailAddress
     );
 
     if (
@@ -30,7 +37,8 @@ exports.handleNewUser = async (request, response, next) => {
       !password ||
       !employeeName ||
       !employeeNumber ||
-      !positionId
+      !positionId ||
+      !emailAddress
     ) {
       return response.status(400).json({ message: "All fields are required." });
     }
@@ -177,6 +185,20 @@ exports.handleFetchPhysician = async (request, response, next) => {
   try {
     const data = await User.findPhysician();
     response.status(200).json(data);
+  } catch (error) {
+    next(error);
+  }
+};
+exports.handleResetNewPassword = async (request, response, next) => {
+  try {
+    const { secretkey, password } = request.body;
+    const data = await User.viewBySecretKey(secretkey, { password });
+
+    if (data?.changedRows === 1) {
+      return response.status(201).json({ success: true });
+    } else {
+      return response.status(404).json({ error: "Record Not Found" });
+    }
   } catch (error) {
     next(error);
   }

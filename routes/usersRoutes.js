@@ -15,7 +15,11 @@ router
 
 router.route("/login").post(usersController.handleLoginUser);
 router.route("/logout").post(usersController.handleLogoutUser);
+router
+  .route("/setup-new-password")
+  .post(usersController.handleResetNewPassword);
 router.route("/session").get(usersController.handleLoggedUser);
+
 router
   .route("/change-password/:id")
   .put(usersController.handleChangepasswordUser);
