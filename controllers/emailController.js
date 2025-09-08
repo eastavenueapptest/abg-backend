@@ -34,6 +34,7 @@ exports.sendAbgFormEmail = async (request, response) => {
 exports.handleSendGeneratekey = async (request, response, next) => {
   try {
     const { username } = request.params;
+    console.log(username);
     const data = await User.searchByUsername(username);
     if (!data) {
       return response.status(404).json({ error: "Request not found" });
