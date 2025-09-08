@@ -98,7 +98,7 @@ class User extends Position {
   static async updateById(id, data) {
     const targetId = await id;
     const inputData = await data;
-    const query = `UPDATE users set users.username='${inputData.username}', users.employee_name='${inputData.employeeName}',users.employee_number='${inputData.employeeNumber}', users.position_id='${inputData.positionId}'  WHERE users.id=${targetId}`;
+    const query = `UPDATE users set users.username='${inputData.username}', users.employee_name='${inputData.employeeName}',users.employee_number='${inputData.employeeNumber}', users.position_id='${inputData.positionId}', users.email_address='${inputData.emailAddress}'  WHERE users.id=${targetId}`;
     const [rows, fields] = await database.execute(query);
     return rows;
   }

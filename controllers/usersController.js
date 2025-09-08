@@ -70,6 +70,7 @@ exports.handleUpdateUserById = async (request, response, next) => {
       employeeName: incomingwData.employee_name,
       employeeNumber: incomingwData.employee_number,
       positionId: incomingwData.position_id,
+      emailAddress: incomingwData.email_address,
     };
     const data = await User.updateById(id, newData);
     response.status(201).json(data);
