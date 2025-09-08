@@ -1,11 +1,11 @@
 const transporter = require("../utils/emailUtils");
 const Result = require("../models/resultsModel");
 const User = require("../models/usersModel");
-const { generateSecretKey } = require("../utils/generateSecretKey.js");
+const { generateSecretKey } = require("../utils/generateSecretKey");
 
 require("dotenv").config();
 
-exports.sendAbgFormEmail = async (request, response) => {
+exports.sendAbgFormEmail = async (request, response, next) => {
   const { id } = request.body;
   try {
     const data = await Result.viewResultFormById(id);
@@ -26,7 +26,7 @@ exports.sendAbgFormEmail = async (request, response) => {
     response.status(200).json({ message: "Email sent successfully" });
   } catch (error) {
     console.error("Email error:", error);
-    response.status(500).json({ error: "Failed to send email" });
+    next(error);
   }
 };
 
@@ -58,6 +58,6 @@ exports.handleSendGeneratekey = async (request, response, next) => {
     response.status(200).json({ message: "Email sent successfully" });
   } catch (error) {
     console.error("Email error:", error);
-    response.status(500).json({ error: "Failed to send email" });
+    next(error);
   }
 };
