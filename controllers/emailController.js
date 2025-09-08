@@ -27,6 +27,7 @@ exports.sendAbgFormEmail = async (request, response) => {
   } catch (error) {
     console.error("Email error:", error);
     response.status(500).json({ error: "Failed to send email" });
+    next(error);
   }
 };
 
@@ -58,5 +59,6 @@ exports.handleSendGeneratekey = async (request, response, next) => {
   } catch (error) {
     console.error("Email error:", error);
     response.status(500).json({ error: "Failed to send email" });
+    next(error);
   }
 };
