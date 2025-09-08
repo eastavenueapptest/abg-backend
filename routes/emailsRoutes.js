@@ -2,11 +2,10 @@ const express = require("express");
 const router = express.Router();
 const emailController = require("../controllers/emailController");
 
-router.post("/send-abg-form", emailController.sendAbgFormEmail);
+router.route("/send-abg-form").post(emailController.sendAbgFormEmail);
 
-router.get(
-  "/generate-secret-key/:username",
-  emailController.handleSendGeneratekey
-);
+router
+  .route("/generate-secret-key/:username")
+  .get(emailController.handleSendGeneratekey);
 
 module.exports = router;
