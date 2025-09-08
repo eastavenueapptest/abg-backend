@@ -1,7 +1,7 @@
 const transporter = require("../utils/emailUtils");
 const Result = require("../models/resultsModel");
 const User = require("../models/usersModel");
-const { generateSecretKey } = require("../utils/generateSecretKey,js");
+const { generateSecretKey } = require("../utils/generateSecretKey.js");
 
 require("dotenv").config();
 
@@ -56,6 +56,7 @@ exports.handleSendGeneratekey = async (request, response, next) => {
     await transporter.sendMail(mailOptions);
     response.status(200).json({ message: "Email sent successfully" });
   } catch (error) {
-    next(error);
+    console.error("Email error:", error);
+    response.status(500).json({ error: "Failed to send email" });
   }
 };
