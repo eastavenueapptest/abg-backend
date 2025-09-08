@@ -8,6 +8,8 @@ const transporter = nodemailer.createTransport({
     user: process.env.NODE_APP_GOOGLE_EMAIL,
     pass: process.env.NODE_APP_GOOGLE_PASS,
   },
+  logger: true,
+  debug: true,
 });
 
 transporter.use(
