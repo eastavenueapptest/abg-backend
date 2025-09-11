@@ -1,9 +1,22 @@
-const transporter = require("../utils/emailUtils");
+const { google } = require("googleapis");
+const { createTransporter } = require("../utils/emailUtils");
 const Result = require("../models/resultsModel");
-const User = require("../models/usersModel");
 const { generateSecretKey } = require("../utils/generateSecretKey");
 
-require("dotenv").config();
+const {
+  GOOGLE_CLIENT_ID,
+  GOOGLE_CLIENT_SECRET,
+  GOOGLE_REDIRECT_URI,
+  REFRESH_TOKEN,
+  SENDER_EMAIL,
+} = process.env;
+
+const oAuth2Client = new google.auth.OAuth2(
+  GOOGLE_CLIENT_ID,
+  GOOGLE_CLIENT_SECRET,
+  GOOGLE_REDIRECT_URI
+);
+oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
 
 exports.sendAbgFormEmail = async (request, response, next) => {
   const { id } = request.body;
@@ -16,8 +29,9 @@ exports.sendAbgFormEmail = async (request, response, next) => {
       return response.status(404).json({ error: "Request not found" });
     }
 
+    const transporter = await createTransporter();
     const mailOptions = {
-      from: process.env.NODE_APP_GOOGLE_EMAIL,
+      from: SENDER_EMAIL,
       to: "anne.she00@gmail.com",
       subject: "ABG ResultForm Submission",
       template: "abgform",
@@ -25,14 +39,10 @@ exports.sendAbgFormEmail = async (request, response, next) => {
         patient_name: data?.patient_name,
       },
     };
-    await transporter.sendMail(mailOptions, (err, info) => {
-      if (err) {
-        console.error("Nodemailer Error:", err);
-      } else {
-        console.log("Email sent:", info.response);
-      }
-    });
+
+    const result = await transporter.sendMail(mailOptions);
     response.status(200).json({ message: "Email sent successfully" });
+    return result;
   } catch (error) {
     console.error(
       "Email error (sendAbgFormEmail):",
@@ -51,8 +61,9 @@ exports.handleSendGeneratekey = async (request, response, next) => {
     console.log(username);
     const data = await User.searchByUsername(username);
     if (!data || data.length === 0) {
-      return response.status(404).json({ error: "Request not found" });
+      return response.status(404).json({ error: "User not found" });
     }
+
     const key = generateSecretKey();
     const updatedData = await User.setupSecretKey(username, { key: key });
     if (!updatedData || updatedData.affectedRows === 0) {
@@ -69,13 +80,8 @@ exports.handleSendGeneratekey = async (request, response, next) => {
       },
     };
 
-    await transporter.sendMail(mailOptions, (err, info) => {
-      if (err) {
-        console.error("Nodemailer Error:", err);
-      } else {
-        console.log("Email sent:", info.response);
-      }
-    });
+    const emailResult = await transporter.sendMail(mailOptions);
+    console.log({ data: emailResult, message: "Email sent successfully" });
     response.status(200).json({ message: "Email sent successfully" });
   } catch (error) {
     console.error("Email error:", error.message, error.stack);
