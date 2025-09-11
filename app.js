@@ -50,7 +50,7 @@ app.use(
     ],
   })
 );
-
+app.options("*", cors());
 //SESSION
 app.use(
   session({
