@@ -71,6 +71,9 @@ exports.handleSendGeneratekey = async (request, response, next) => {
     if (!updatedData || updatedData?.affectedRows === 0) {
       return response.status(404).json({ error: "Request did not processed" });
     }
+
+    const transporter = await createTransporter();
+
     const mailOptions = {
       from: process.env.NODE_APP_GOOGLE_EMAIL,
       to: data[0]?.email_address,
@@ -81,7 +84,6 @@ exports.handleSendGeneratekey = async (request, response, next) => {
         key: key,
       },
     };
-
     const emailResult = await transporter.sendMail(mailOptions);
     console.log({ data: emailResult, message: "Email sent successfully" });
     response.status(200).json({ message: "Email sent successfully" });
