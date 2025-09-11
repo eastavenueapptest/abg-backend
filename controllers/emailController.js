@@ -56,39 +56,57 @@ exports.sendAbgFormEmail = async (request, response, next) => {
       .json({ error: "Internal server error", details: error.message });
   }
 };
-
 exports.handleSendGeneratekey = async (request, response, next) => {
   try {
     const { username } = request.params;
-    console.log(username);
+    console.log("Requested username:", username);
+
     const data = await User.searchByUsername(username);
-    if (!data || data?.length === 0) {
+    if (!data || data.length === 0) {
       return response.status(404).json({ error: "User not found" });
     }
 
     const key = generateSecretKey();
-    const updatedData = await User.setupSecretKey(username, { key: key });
-    if (!updatedData || updatedData?.affectedRows === 0) {
-      return response.status(404).json({ error: "Request did not processed" });
+    const updatedData = await User.setupSecretKey(username, { key });
+    if (!updatedData || updatedData.affectedRows === 0) {
+      return response
+        .status(500)
+        .json({ error: "Failed to update secret key in DB" });
     }
 
     const transporter = await createTransporter();
+    try {
+      await transporter.verify();
+      console.log(" Transporter verified successfully");
+    } catch (verifyError) {
+      console.error("❌ Transporter verify failed:", verifyError);
+    }
 
+    // 4. Send email
     const mailOptions = {
-      from: process.env.NODE_APP_GOOGLE_EMAIL,
-      to: data[0]?.email_address,
+      from: SENDER_EMAIL,
+      to: data[0].email_address,
       subject: "Change Password Request",
       template: "generateKey",
       context: {
-        employee_name: data[0]?.employee_name,
-        key: key,
+        employee_name: data[0].employee_name,
+        key,
       },
     };
+
     const emailResult = await transporter.sendMail(mailOptions);
-    console.log({ data: emailResult, message: "Email sent successfully" });
-    response.status(200).json({ message: "Email sent successfully" });
+    console.log("Email sent successfully:", emailResult);
+
+    return response.status(200).json({ message: "Email sent successfully" });
   } catch (error) {
-    console.error("Email error:", error.message, error.stack);
+    console.error("Email error (handleSendGeneratekey):", {
+      message: error.message,
+      stack: error.stack,
+      code: error.code,
+      command: error.command,
+      response: error.response,
+      responseCode: error.responseCode,
+    });
     return response
       .status(500)
       .json({ error: "Internal server error", details: error.message });
