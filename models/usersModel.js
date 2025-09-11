@@ -48,9 +48,12 @@ class User extends Position {
     return { insertId: newId };
   }
   static async searchByUsername(username) {
-    const targetUsername = await username;
-    const query = `SELECT users.username,users.employee_name, users.email_address FROM users WHERE users.username='${targetUsername}'`;
-    const [rows, fields] = await database.execute(query);
+    const query = `
+    SELECT username, employee_name, email_address 
+    FROM users 
+    WHERE username = ?
+  `;
+    const [rows] = await database.execute(query, [username]);
     return rows;
   }
   static async viewById(id) {
