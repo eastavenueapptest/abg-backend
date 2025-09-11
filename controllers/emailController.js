@@ -8,8 +8,11 @@ require("dotenv").config();
 exports.sendAbgFormEmail = async (request, response, next) => {
   const { id } = request.body;
   try {
+    if (!id) {
+      return response.status(400).json({ error: "Missing required field: id" });
+    }
     const data = await Result.viewResultFormById(id);
-    if (!data) {
+    if (!data || data.length === 0) {
       return response.status(404).json({ error: "Request not found" });
     }
 
@@ -25,8 +28,14 @@ exports.sendAbgFormEmail = async (request, response, next) => {
     await transporter.sendMail(mailOptions);
     response.status(200).json({ message: "Email sent successfully" });
   } catch (error) {
-    console.error("Email error:", error);
-    next(error);
+    console.error(
+      "Email error (sendAbgFormEmail):",
+      error.message,
+      error.stack
+    );
+    return response
+      .status(500)
+      .json({ error: "Internal server error", details: error.message });
   }
 };
 
@@ -35,12 +44,12 @@ exports.handleSendGeneratekey = async (request, response, next) => {
     const { username } = request.params;
     console.log(username);
     const data = await User.searchByUsername(username);
-    if (!data) {
+    if (!data || data.length === 0) {
       return response.status(404).json({ error: "Request not found" });
     }
     const key = generateSecretKey();
     const updatedData = await User.setupSecretKey(username, { key: key });
-    if (!updatedData.affectedRows) {
+    if (!updatedData || updatedData.affectedRows === 0) {
       return response.status(404).json({ error: "Request did not processed" });
     }
     const mailOptions = {
@@ -57,7 +66,9 @@ exports.handleSendGeneratekey = async (request, response, next) => {
     await transporter.sendMail(mailOptions);
     response.status(200).json({ message: "Email sent successfully" });
   } catch (error) {
-    console.error("Email error:", error);
-    next(error);
+    console.error("Email error:", error.message, error.stack);
+    return response
+      .status(500)
+      .json({ error: "Internal server error", details: error.message });
   }
 };
