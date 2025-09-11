@@ -79,7 +79,7 @@ exports.handleSendGeneratekey = async (request, response, next) => {
       await transporter.verify();
       console.log(" Transporter verified successfully");
     } catch (verifyError) {
-      console.error("❌ Transporter verify failed:", verifyError);
+      console.error("Transporter verify failed:", verifyError);
     }
 
     const mailOptions = {
