@@ -25,7 +25,13 @@ exports.sendAbgFormEmail = async (request, response, next) => {
         patient_name: data?.patient_name,
       },
     };
-    await transporter.sendMail(mailOptions);
+    await transporter.sendMail(mailOptions, (err, info) => {
+      if (err) {
+        console.error("Nodemailer Error:", err);
+      } else {
+        console.log("Email sent:", info.response);
+      }
+    });
     response.status(200).json({ message: "Email sent successfully" });
   } catch (error) {
     console.error(
@@ -63,7 +69,13 @@ exports.handleSendGeneratekey = async (request, response, next) => {
       },
     };
 
-    await transporter.sendMail(mailOptions);
+    await transporter.sendMail(mailOptions, (err, info) => {
+      if (err) {
+        console.error("Nodemailer Error:", err);
+      } else {
+        console.log("Email sent:", info.response);
+      }
+    });
     response.status(200).json({ message: "Email sent successfully" });
   } catch (error) {
     console.error("Email error:", error.message, error.stack);
