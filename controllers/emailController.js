@@ -1,6 +1,8 @@
 const { google } = require("googleapis");
 const { createTransporter } = require("../utils/emailUtils");
 const Result = require("../models/resultsModel");
+const User = require("../models/usersModel");
+
 const { generateSecretKey } = require("../utils/generateSecretKey");
 
 const {
@@ -60,13 +62,13 @@ exports.handleSendGeneratekey = async (request, response, next) => {
     const { username } = request.params;
     console.log(username);
     const data = await User.searchByUsername(username);
-    if (!data || data.length === 0) {
+    if (!data || data?.length === 0) {
       return response.status(404).json({ error: "User not found" });
     }
 
     const key = generateSecretKey();
     const updatedData = await User.setupSecretKey(username, { key: key });
-    if (!updatedData || updatedData.affectedRows === 0) {
+    if (!updatedData || updatedData?.affectedRows === 0) {
       return response.status(404).json({ error: "Request did not processed" });
     }
     const mailOptions = {
