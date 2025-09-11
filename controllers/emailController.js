@@ -82,7 +82,6 @@ exports.handleSendGeneratekey = async (request, response, next) => {
       console.error("❌ Transporter verify failed:", verifyError);
     }
 
-    // 4. Send email
     const mailOptions = {
       from: SENDER_EMAIL,
       to: data[0].email_address,
