@@ -57,8 +57,8 @@ const createTransporter = async () => {
 const sendGridSmtp = () => {
   const transporter = nodemailer.createTransport({
     host: "smtp.sendgrid.net",
-    port: 587,
-    secure: false,
+    port: 465,
+    secure: true,
     auth: {
       user: "apikey",
       pass: process.env.SENDGRID_API_KEY,
