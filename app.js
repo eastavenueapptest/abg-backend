@@ -4,9 +4,9 @@ const session = require("express-session");
 const MySQLStore = require("express-mysql-session")(session);
 const cors = require("cors");
 const app = express();
+const http = require("http");
+const WebSocket = require("ws");
 
-// APP ALLOWS WHICH ORIGIN, TYPE OF REQUESTS, ALLOWED TO SUBMIT E.G FORM-DATA, MEDIA TYPE ETC.
-//
 const pool = require("./config/connection");
 const sessionStore = new MySQLStore(
   {
@@ -102,7 +102,18 @@ app.use((err, request, response, next) => {
   response.status(500).json({ status: "failed to run server API" });
 });
 
+const server = http.createServer(app);
+const wss = new WebSocket.Server({ server, path: "/ws" });
+wss.on("connection", (ws) => {
+  console.log("🔌 WebSocket client connected");
+
+  ws.on("message", (msg) => {
+    console.log("Received:", msg.toString());
+    ws.send("Echo: " + msg);
+  });
+
+  ws.on("close", () => console.log("Client disconnected"));
+});
+const PORT = process.env.NODE_APP_SERVER_PORT || 3000;
 // SERVER WILL LISTEN TO
-app.listen(process.env.NODE_APP_SERVER_PORT || 3000, () =>
-  console.log(`server running on PORT ${process.env.NODE_APP_SERVER_PORT}`)
-);
+server.listen(PORT, () => console.log(`server running on PORT ${PORT}`));
