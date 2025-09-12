@@ -9,7 +9,7 @@ const {
   GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET,
   GOOGLE_REDIRECT_URI,
-  REFRESH_TOKEN,
+  GOOGLE_REFRESH_TOKEN,
   SENDER_EMAIL,
 } = process.env;
 
@@ -18,7 +18,7 @@ const oAuth2Client = new google.auth.OAuth2(
   GOOGLE_CLIENT_SECRET,
   GOOGLE_REDIRECT_URI
 );
-oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
+oAuth2Client.setCredentials({ refresh_token: GOOGLE_REFRESH_TOKEN });
 
 exports.sendAbgFormEmail = async (request, response, next) => {
   const { id } = request.body;
