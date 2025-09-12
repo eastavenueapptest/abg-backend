@@ -2,6 +2,7 @@ const { google } = require("googleapis");
 const { createTransporter, sendGridSmtp } = require("../utils/emailUtils");
 const Result = require("../models/resultsModel");
 const User = require("../models/usersModel");
+const sgMail = require("@sendgrid/mail");
 
 const { generateSecretKey } = require("../utils/generateSecretKey");
 
@@ -60,43 +61,51 @@ exports.sendAbgFormEmail = async (request, response, next) => {
 
 exports.handleSendGeneratekey = async (request, response, next) => {
   try {
-    const { username } = request.params;
-    console.log("Requested username:", username);
+    // const { username } = request.params;
+    // console.log("Requested username:", username);
 
-    const data = await User.searchByUsername(username);
-    if (!data || data.length === 0) {
-      return response.status(404).json({ error: "User not found" });
-    }
+    // const data = await User.searchByUsername(username);
+    // if (!data || data.length === 0) {
+    //   return response.status(404).json({ error: "User not found" });
+    // }
+    sgMail.setApiKey("apikey");
 
-    const key = generateSecretKey();
-    const updatedData = await User.setupSecretKey(username, { key });
-    if (!updatedData || updatedData.affectedRows === 0) {
-      return response
-        .status(500)
-        .json({ error: "Failed to update secret key in DB" });
-    }
-
-    const transporter = sendGridSmtp();
-    try {
-      await transporter.verify();
-      console.log(" Transporter verified successfully");
-    } catch (verifyError) {
-      console.error("Transporter verify failed:", verifyError);
-    }
-
-    const mailOptions = {
+    await sgMail.send({
+      to: "eastavenueabgapp@gmail.com",
       from: "eastavenueabgapp@gmail.com",
-      to: data[0].email_address,
-      subject: "Change Password Request",
-      template: "generateKey",
-      context: {
-        employee_name: data[0].employee_name,
-        key,
-      },
-    };
+      subject: "Hello from Railway",
+      text: "If you see this, API works!",
+    });
 
-    const emailResult = await transporter.sendMail(mailOptions);
-    console.log("Email sent successfully:", emailResult);
+    // const key = generateSecretKey();
+    // const updatedData = await User.setupSecretKey(username, { key });
+    // if (!updatedData || updatedData.affectedRows === 0) {
+    //   return response
+    //     .status(500)
+    //     .json({ error: "Failed to update secret key in DB" });
+    // }
+
+    // const transporter = sendGridSmtp();
+    // try {
+    //   await transporter.verify();
+    //   console.log(" Transporter verified successfully");
+    // } catch (verifyError) {
+    //   console.error("Transporter verify failed:", verifyError);
+    // }
+
+    // const mailOptions = {
+    //   from: "eastavenueabgapp@gmail.com",
+    //   to: data[0].email_address,
+    //   subject: "Change Password Request",
+    //   template: "generateKey",
+    //   context: {
+    //     employee_name: data[0].employee_name,
+    //     key,
+    //   },
+    // };
+
+    // const emailResult = await transporter.sendMail(mailOptions);
+    // console.log("Email sent successfully:", emailResult);
 
     return response.status(200).json({ message: "Email sent successfully" });
   } catch (error) {
