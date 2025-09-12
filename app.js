@@ -117,7 +117,6 @@
 // const PORT = process.env.NODE_APP_SERVER_PORT || 3000;
 // // SERVER WILL LISTEN TO
 // server.listen(PORT, () => console.log(`server running on PORT ${PORT}`));
-
 require("dotenv").config();
 const express = require("express");
 const session = require("express-session");
@@ -144,8 +143,7 @@ const allowedOrigins = [
   "capacitor://localhost",
   "http://0.0.0.0",
   "ionic://localhost",
-  "https://abg-app-ui-production.up.railway.app",
-  "https://abg-app-ui-v1.onrender.com",
+  "https://abgp-frontend-production.up.railway.app",
 ];
 
 app.use(express.json());
@@ -161,7 +159,7 @@ app.use(
       }
     },
     credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Origin", "X-Requested-With", "Content-Type", "Accept"],
   })
 );
@@ -207,6 +205,10 @@ app.use(
   require("./routes/emailsRoutes")
 );
 
+app.use(
+  `/api/${process.env.NODE_APP_API_MACHINES}`,
+  require("./routes/machineRoutes")
+);
 // CHECKS IF RUNNING
 app.use((err, request, response, next) => {
   console.error(err);
