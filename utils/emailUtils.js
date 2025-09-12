@@ -54,4 +54,30 @@ const createTransporter = async () => {
   return transporter;
 };
 
-module.exports = { createTransporter };
+const sendGridSmtp = () => {
+  const transporter = nodemailer.createTransport({
+    host: "smtp.sendgrid.net",
+    port: 587,
+    auth: {
+      user: "apikey",
+      pass: process.env.SENDGRID_API_KEY,
+    },
+  });
+
+  transporter.use(
+    "compile",
+    hbs({
+      viewEngine: {
+        extname: ".handlebars",
+        partialsDir: path.resolve("./emailTemplates"),
+        defaultLayout: false,
+      },
+      viewPath: path.resolve("./emailTemplates"),
+      extName: ".handlebars",
+    })
+  );
+
+  return transporter;
+};
+
+module.exports = { sendGridSmtp, createTransporter };
