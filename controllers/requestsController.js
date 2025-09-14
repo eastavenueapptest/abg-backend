@@ -68,19 +68,18 @@ exports.handleNewMedicalTest = async (request, response, next) => {
       !requestor ||
       !fio2Route
     ) {
-      const mailOptions = {
-        from: process.env.NODE_APP_GOOGLE_EMAIL,
-        to: "anne.she00@gmail.com",
-        subject: "Requesting for ABG Test.",
-        template: "notifyIncomingRequest",
-        context: {
-          patient_name: patientName,
-        },
-      };
-      await transporter.sendMail(mailOptions);
-
       return response.status(400).json({ message: "All fields are required." });
     }
+    const mailOptions = {
+      from: process.env.NODE_APP_GOOGLE_EMAIL,
+      to: "anne.she00@gmail.com",
+      subject: "Requesting for ABG Test.",
+      template: "notifyIncomingRequest",
+      context: {
+        patient_name: patientName,
+      },
+    };
+    await transporter.sendMail(mailOptions);
     const data = await inputs.save();
 
     response.status(201).json(data);
