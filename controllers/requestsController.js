@@ -1,6 +1,6 @@
-const { response } = require("express");
 const MedicalTest = require("../models/requestsModel");
-const { transporter } = require("../utils/emailUtils");
+const transporter = require("../utils/emailUtils");
+require("dotenv").config();
 
 exports.handleUpdateStatusRequest = async (request, response, next) => {
   try {
@@ -70,18 +70,23 @@ exports.handleNewMedicalTest = async (request, response, next) => {
     ) {
       return response.status(400).json({ message: "All fields are required." });
     }
+    const data = await inputs.save();
+
     const mailOptions = {
       from: process.env.NODE_APP_GOOGLE_EMAIL,
       to: "anne.she00@gmail.com",
-      subject: "Requesting for ABG Test.",
+      subject: "Requesting for ABG Test",
       template: "notifyIncomingRequest",
       context: {
         patient_name: patientName,
       },
     };
-    await transporter.sendMail(mailOptions);
-    const data = await inputs.save();
-
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        return console.log(error);
+      }
+      console.log("Message sent: " + info.response);
+    });
     response.status(201).json(data);
   } catch (error) {
     console.error("Error creating user:", error);
