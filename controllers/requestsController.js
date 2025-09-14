@@ -1,5 +1,6 @@
 const { response } = require("express");
 const MedicalTest = require("../models/requestsModel");
+const { transporter } = require("../utils/emailUtils");
 
 exports.handleUpdateStatusRequest = async (request, response, next) => {
   try {
@@ -67,6 +68,17 @@ exports.handleNewMedicalTest = async (request, response, next) => {
       !requestor ||
       !fio2Route
     ) {
+      const mailOptions = {
+        from: process.env.NODE_APP_GOOGLE_EMAIL,
+        to: "anne.she00@gmail.com",
+        subject: "Requesting for ABG Test.",
+        template: "notifyIncomingRequest",
+        context: {
+          patient_name: patientName,
+        },
+      };
+      await transporter.sendMail(mailOptions);
+
       return response.status(400).json({ message: "All fields are required." });
     }
     const data = await inputs.save();
