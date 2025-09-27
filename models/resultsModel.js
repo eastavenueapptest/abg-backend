@@ -91,16 +91,39 @@ class Result {
       }
       return str.replace("T", " ");
     }
+
+    function addOneMinute(dateTimeStr) {
+      const [datePart, timePart] = dateTimeStr.split(" ");
+      const [year, month, day] = datePart.split("-").map(Number);
+      const [hour, minute, second] = timePart.split(":").map(Number);
+
+      const d = new Date(year, month - 1, day, hour, minute, second);
+      d.setMinutes(d.getMinutes() + 1); // ✅ add one minute
+
+      const yyyy = d.getFullYear();
+      const mm = String(d.getMonth() + 1).padStart(2, "0");
+      const dd = String(d.getDate()).padStart(2, "0");
+      const hh = String(d.getHours()).padStart(2, "0");
+      const mi = String(d.getMinutes()).padStart(2, "0");
+      const ss = String(d.getSeconds()).padStart(2, "0");
+
+      return `${yyyy}-${mm}-${dd} ${hh}:${mi}:${ss}`;
+    }
+
     const params = [];
     if (date.from && date.to) {
       const from = normalizeDateTime(date?.from);
       const to = normalizeDateTime(date?.to);
+
       console.log("before", from, to);
+
       whereClause = `
-        WHERE CONVERT_TZ(results.date_created, '+00:00', '+08:00')
-        BETWEEN ? AND ?
-      `;
-      params.push(from, to);
+      WHERE DATE_FORMAT(CONVERT_TZ(results.date_created, '+00:00', '+08:00'), '%Y-%m-%d %H:%i:%s') >= ?
+        AND DATE_FORMAT(CONVERT_TZ(results.date_created, '+00:00', '+08:00'), '%Y-%m-%d %H:%i:%s') < ?
+    `;
+
+      params.push(from, addOneMinute(to));
+      console.log("after", from, addOneMinute(to));
     }
 
     const sortDirection = sorting.toLowerCase() === "asc" ? "ASC" : "DESC";
