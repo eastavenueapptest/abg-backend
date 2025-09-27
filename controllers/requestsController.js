@@ -48,6 +48,7 @@ exports.handleNewMedicalTest = async (request, response, next) => {
       requestor,
       physician,
       fio2Route,
+      ward,
     } = request.body;
     const inputs = new MedicalTest(
       patientName,
@@ -56,7 +57,8 @@ exports.handleNewMedicalTest = async (request, response, next) => {
       diagnosis,
       requestor,
       physician,
-      fio2Route
+      fio2Route,
+      ward
     );
 
     if (
@@ -66,7 +68,8 @@ exports.handleNewMedicalTest = async (request, response, next) => {
       !diagnosis ||
       !physician ||
       !requestor ||
-      !fio2Route
+      !fio2Route ||
+      !ward
     ) {
       return response.status(400).json({ message: "All fields are required." });
     }
@@ -114,6 +117,7 @@ exports.handleUpdateMedicalTestById = async (request, response, next) => {
       age: incomingwData.age,
       physician: incomingwData.physician_id,
       fio2Route: incomingwData.fio2_route,
+      ward: incomingwData.ward,
     };
     const data = await MedicalTest.updateById(id, newData);
     response.status(201).json(data);

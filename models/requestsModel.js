@@ -8,7 +8,8 @@ class MedicalTest {
     diagnosis,
     requestor,
     physician,
-    fio2Route
+    fio2Route,
+    ward
   ) {
     this.patientName = patientName;
     this.age = age;
@@ -17,6 +18,7 @@ class MedicalTest {
     this.requestor = requestor;
     this.physician = physician;
     this.fio2Route = fio2Route;
+    this.ward = ward;
   }
   async save() {
     const [maxRows] = await database.execute(
@@ -28,8 +30,8 @@ class MedicalTest {
     INSERT INTO medical_requests (
       id, patient_name, age, sex, diagnosis,
       requestor_id, physician_id, fio2_route,
-      status, is_deleted, date_created
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+      status, is_deleted, ward, date_created
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
   `;
 
     const values = [
@@ -43,6 +45,7 @@ class MedicalTest {
       this.fio2Route ?? null,
       1,
       0,
+      this.ward ?? null,
     ];
 
     const [rows] = await database.execute(query, values);
@@ -58,7 +61,8 @@ class MedicalTest {
     medical_requests.diagnosis, 
     medical_requests.requestor_id, 
     medical_requests.physician_id, 
-    medical_requests.fio2_route,  
+    medical_requests.fio2_route,
+    medical_requests.ward,  
     medical_requests.status,
     medical_requests.is_deleted 
     FROM medical_requests WHERE medical_requests.id=${targetId}`;
@@ -81,7 +85,8 @@ class MedicalTest {
     medical_requests.sex='${inputData.sex}', 
     medical_requests.diagnosis='${inputData.diagnosis}',
     medical_requests.physician_id='${inputData.physician}',
-    medical_requests.fio2_route='${inputData.fio2Route}' WHERE medical_requests.id=${targetId}`;
+    medical_requests.fio2_route='${inputData.fio2Route}', 
+    medical_requests.ward='${inputData.ward}' WHERE medical_requests.id=${targetId}`;
     const [rows, fields] = await database.execute(query);
     return rows;
   }

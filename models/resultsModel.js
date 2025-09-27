@@ -137,6 +137,7 @@ class Result {
       medical_requests.fio2_route,
       medical_requests.status,
       medical_requests.diagnosis,
+      medical_requests.ward,
       machines.machine_name, 
       a.employee_name AS requestor,
       b.employee_name AS physician_doctor,
@@ -170,11 +171,21 @@ class Result {
         results.extracted_text, 
         results.interpreted_by,
         results.interpreted_message,
+        DATE_FORMAT(
+        CONVERT_TZ(results.date_created, '+00:00', '+08:00'),
+        '%m/%d/%Y'
+        ) AS date,
+          TIME_FORMAT(
+        CONVERT_TZ(results.date_created, '+00:00', '+08:00'),
+        '%h:%i %p'
+        ) AS time,
         medical_requests.patient_name,
         medical_requests.age,
         medical_requests.sex,
         medical_requests.status,
         medical_requests.diagnosis, 
+        medical_requests.ward, 
+        medical_requests.fio2_route, 
         a.employee_name AS requestor,
         b.employee_name AS physician_doctor,
         c.employee_name AS respiratory_therapists
