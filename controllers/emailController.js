@@ -118,7 +118,12 @@ const transporter = require("../utils/emailUtils");
 const Result = require("../models/resultsModel");
 const User = require("../models/usersModel");
 const { generateSecretKey } = require("../utils/generateSecretKey");
-
+const send = require("gmail-send")({
+  user: "eastavenueabgapp@gmail.com",
+  client_id: process.env.GOOGLE_CLIENT_ID,
+  client_secret: process.env.GOOGLE_CLIENT_SECRET,
+  refresh_token: process.env.GOOGLE_REFRESH_TOKEN,
+});
 require("dotenv").config();
 
 exports.sendAbgFormEmail = async (request, response, next) => {
@@ -128,6 +133,13 @@ exports.sendAbgFormEmail = async (request, response, next) => {
     if (!data) {
       return response.status(404).json({ error: "Request not found" });
     }
+    send({
+      to: "anne.she00@gmail.com",
+      subject: "Hello",
+      text: "Hi from Gmail API!",
+    })
+      .then(console.log)
+      .catch(console.error);
 
     const mailOptions = {
       from: process.env.NODE_APP_GOOGLE_EMAIL,
