@@ -17,11 +17,11 @@ transporter.use(
   "compile",
   hbs({
     viewEngine: {
-      extname: ".handlebars",
-      partialsDir: path.resolve("./emailTemplates"),
+      extName: ".handlebars",
+      partialsDir: path.join(__dirname, "../emailTemplates"),
       defaultLayout: false,
     },
-    viewPath: path.resolve("./emailTemplates"),
+    viewPath: path.join(__dirname, "../emailTemplates"),
     extName: ".handlebars",
   })
 );
