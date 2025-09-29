@@ -210,9 +210,11 @@ app.use(
   require("./routes/machineRoutes")
 );
 // CHECKS IF RUNNING
-app.use((err, request, response, next) => {
-  console.error(err);
-  response.status(500).json({ status: "failed to run server API" });
+app.use((error, request, response, next) => {
+  console.error("Global error handler:", error.message);
+  res
+    .status(500)
+    .json({ err: "Internal server error", details: error.message });
 });
 
 // SERVER WILL LISTEN TO
