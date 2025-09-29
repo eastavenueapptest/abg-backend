@@ -212,7 +212,7 @@ app.use(
 // CHECKS IF RUNNING
 app.use((error, request, response, next) => {
   console.error("Global error handler:", error.message);
-  res.status(500).json({
+  response.status(500).json({
     err: "Internal server error",
     details: error.message,
     code: error.code,
