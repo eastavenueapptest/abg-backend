@@ -119,7 +119,8 @@ const Result = require("../models/resultsModel");
 const User = require("../models/usersModel");
 const { generateSecretKey } = require("../utils/generateSecretKey");
 const send = require("gmail-send")({
-  user: "eastavenueabgapp@gmail.com",
+  user: process.env.NODE_APP_GOOGLE_EMAIL,
+  pass: process.env.NODE_APP_GOOGLE_PASS,
   client_id: process.env.GOOGLE_CLIENT_ID,
   client_secret: process.env.GOOGLE_CLIENT_SECRET,
   refresh_token: process.env.GOOGLE_REFRESH_TOKEN,
