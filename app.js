@@ -145,7 +145,7 @@ const allowedOrigins = [
   "ionic://localhost",
   "https://abgp-frontend-production.up.railway.app",
   "https://abgp-frontend.onrender.com",
-  "https://script.google.com/macros/s/AKfycbwX90N44Phk_kGdfZlysPVeq-2ObszIs1Y88wWtPYQ7i10AbmSbgUiwZf7TZLPDkE7e/exec",
+  "https://script.google.com/macros/s/AKfycbz49BTqBw4hmCZUnLF4leWj2nUGel4_R7VzXMQ-zusc7Gi02Z1bEgeJKEe8VDxocbtf/exec",
 ];
 
 app.use(express.json());
