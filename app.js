@@ -144,6 +144,7 @@ const allowedOrigins = [
   "http://0.0.0.0",
   "ionic://localhost",
   "https://abgp-frontend-production.up.railway.app",
+  "https://abgp-frontend.onrender.com/login",
   "https://script.google.com/macros/s/AKfycbwX90N44Phk_kGdfZlysPVeq-2ObszIs1Y88wWtPYQ7i10AbmSbgUiwZf7TZLPDkE7e/exec",
 ];
 
