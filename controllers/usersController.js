@@ -1,4 +1,5 @@
 const User = require("../models/usersModel");
+const { generateSecretKey } = require("../utils/generateSecretKey");
 
 exports.handleFetchUser = async (request, response, next) => {
   try {
