@@ -245,3 +245,27 @@ exports.handleResetNewPassword = async (request, response, next) => {
     next(error);
   }
 };
+
+exports.handleSendGeneratekey = async (request, response, next) => {
+  try {
+    const { username } = request.params;
+    const data = await User.searchByUsername(username);
+    if (!data || data.length === 0) {
+      return response.status(404).json({ error: "User not found" });
+    }
+
+    const key = generateSecretKey();
+    const updatedData = await User.setupSecretKey(username, { key });
+    if (!updatedData || updatedData.affectedRows === 0) {
+      return response
+        .status(500)
+        .json({ error: "Failed to update secret key in DB" });
+    }
+    response
+      .status(200)
+      .json({ message: "Temporary key generated successfully" });
+  } catch (error) {
+    console.error("Email error:", error);
+    next(error);
+  }
+};

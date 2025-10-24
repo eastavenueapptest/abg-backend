@@ -29,4 +29,8 @@ router
   .route("/assignee-for-physician")
   .get(usersController.handleFetchPhysician);
 
+router
+  .route("/generate-secret-key/:username")
+  .get(usersController.handleSendGeneratekey);
+
 module.exports = router;
