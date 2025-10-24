@@ -23,6 +23,24 @@ exports.handleNewUser = async (request, response, next) => {
       positionId,
       emailAddress,
     } = request.body;
+
+    const errorFields = {};
+
+    if (!username) errorFields.username = "username is required";
+    if (!password) errorFields.password = "password is required";
+    if (!employeeName) errorFields.employeeName = "employee name is required";
+    if (!employeeNumber)
+      errorFields.employeeNumber = "employee number is required";
+    if (!positionId) errorFields.positionId = "role is is required";
+    if (!emailAddress) errorFields.emailAddress = "email address is required";
+
+    if (Object.keys(errorFields).length > 0) {
+      return response.status(400).json({
+        message: "Some required fields are missing.",
+        errorFields,
+      });
+    }
+
     const user = new User(
       positionId,
       username,
@@ -32,26 +50,22 @@ exports.handleNewUser = async (request, response, next) => {
       emailAddress
     );
 
-    if (
-      !username ||
-      !password ||
-      !employeeName ||
-      !employeeNumber ||
-      !positionId ||
-      !emailAddress
-    ) {
-      return response.status(400).json({ message: "All fields are required." });
-    }
-
     const data = await user.save();
 
+    if (!data.success && data.errorFields) {
+      return response.status(400).json({
+        message: "Duplicate fields found.",
+        errorFields: data.errorFields,
+      });
+    }
+
     response.status(201).json(data);
-    // response.send(request.body);
   } catch (error) {
     console.error("Error creating user:", error);
-    next(error); // Pass the error to the error handler
+    next(error);
   }
 };
+
 exports.handleFetchUserById = async (request, response, next) => {
   try {
     const { id } = request.params;
@@ -64,15 +78,42 @@ exports.handleFetchUserById = async (request, response, next) => {
 exports.handleUpdateUserById = async (request, response, next) => {
   try {
     const { id } = request.params;
-    const incomingwData = request.body;
+    const { username, employeeName, employeeNumber, positionId, emailAddress } =
+      request.body;
+    const errorFields = {};
+
+    if (!username) errorFields.username = "username is required";
+    if (!employeeName) errorFields.employeeName = "employee name is required";
+    if (!employeeNumber)
+      errorFields.employeeNumber = "employee number is required";
+    if (!positionId) errorFields.positionId = "role is is required";
+    if (!emailAddress) errorFields.emailAddress = "email address is required";
+
+    if (Object.keys(errorFields).length > 0) {
+      return response.status(400).json({
+        message: "Some required fields are missing.",
+        errorFields,
+      });
+    }
+    const referenceUser = await User.viewById(id);
     const newData = {
-      username: incomingwData.username,
-      employeeName: incomingwData.employee_name,
-      employeeNumber: incomingwData.employee_number,
-      positionId: incomingwData.position_id,
-      emailAddress: incomingwData.email_address,
+      positionId,
+      username,
+      employeeName,
+      employeeNumber,
+      emailAddress,
+      referenceUsername: referenceUser[0]?.username,
+      referenceEmailAddress: referenceUser[0]?.email_address,
     };
     const data = await User.updateById(id, newData);
+
+    if (!data.success && data.errorFields) {
+      return response.status(400).json({
+        message: "Duplicate fields found.",
+        errorFields: data.errorFields,
+      });
+    }
+
     response.status(201).json(data);
   } catch (error) {
     next(error);

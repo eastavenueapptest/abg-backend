@@ -21,6 +21,27 @@ class User extends Position {
     this.emailAddress = emailAddress;
   }
   async save() {
+    const [checkDuplicateRows] = await database.execute(
+      `SELECT username, email_address FROM users WHERE username = ? OR email_address = ?`,
+      [this.username, this.emailAddress]
+    );
+    const duplicateFields = {};
+    checkDuplicateRows.forEach((row) => {
+      if (row.username === this.username) {
+        duplicateFields.username = "username is already exists";
+      }
+      if (row.email_address === this.emailAddress) {
+        duplicateFields.emailAddress = "email address is already exists";
+      }
+    });
+
+    if (Object.keys(duplicateFields).length > 0) {
+      return {
+        success: false,
+        errorFields: duplicateFields,
+      };
+    }
+
     const salt = await bcrypt.genSalt();
     this.password = await bcrypt.hash(this.password, salt);
 
@@ -101,6 +122,34 @@ class User extends Position {
   static async updateById(id, data) {
     const targetId = await id;
     const inputData = await data;
+    const duplicateFields = {};
+
+    if (inputData.referenceUsername !== inputData.username) {
+      const [rows] = await database.execute(
+        `SELECT username FROM users WHERE username = ?`,
+        [inputData.username]
+      );
+      if (rows.length > 0) {
+        duplicateFields.username = "Username already exists";
+      }
+    }
+    if (inputData.referenceEmailAddress !== inputData.emailAddress) {
+      const [rows] = await database.execute(
+        `SELECT email_address FROM users WHERE email_address = ?`,
+        [inputData.emailAddress]
+      );
+      if (rows.length > 0) {
+        duplicateFields.emailAddress = "Email address already exists";
+      }
+    }
+
+    if (Object.keys(duplicateFields).length > 0) {
+      return {
+        success: false,
+        errorFields: duplicateFields,
+      };
+    }
+
     const query = `UPDATE users set users.username='${inputData.username}', users.employee_name='${inputData.employeeName}',users.employee_number='${inputData.employeeNumber}', users.position_id='${inputData.positionId}', users.email_address='${inputData.emailAddress}'  WHERE users.id=${targetId}`;
     const [rows, fields] = await database.execute(query);
     return rows;
@@ -127,6 +176,7 @@ class User extends Position {
         users.position_id,
         users.email_address,
         users.is_deleted,
+        users.temp_key,
         job_positions.type AS position_name
       FROM users
       JOIN job_positions ON users.position_id = job_positions.id
