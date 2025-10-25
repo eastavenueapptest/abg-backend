@@ -123,7 +123,6 @@ class Result {
     `;
 
       params.push(from, addOneMinute(to));
-      console.log("after", from, addOneMinute(to));
     }
 
     const sortDirection = sorting.toLowerCase() === "asc" ? "ASC" : "DESC";
