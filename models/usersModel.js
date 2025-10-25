@@ -180,6 +180,7 @@ class User extends Position {
         job_positions.type AS position_name
       FROM users
       JOIN job_positions ON users.position_id = job_positions.id
+      ORDER BY users.date_created DESC
     `;
 
     const [rows, fields] = await database.execute(query);
