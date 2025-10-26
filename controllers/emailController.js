@@ -116,8 +116,6 @@
 
 const transporter = require("../utils/emailUtils");
 const Result = require("../models/resultsModel");
-const User = require("../models/usersModel");
-const { generateSecretKey } = require("../utils/generateSecretKey");
 const send = require("gmail-send")({
   user: process.env.NODE_APP_GOOGLE_EMAIL,
   pass: process.env.NODE_APP_GOOGLE_PASS,

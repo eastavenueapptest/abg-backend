@@ -145,6 +145,8 @@ const allowedOrigins = [
   "ionic://localhost",
   "https://abgp-frontend-production.up.railway.app",
   "https://abgp-frontend.onrender.com",
+  "https://eastavenueapptest.github.io/abgp-frontend",
+  "https://eastavenueapptest.github.io",
   "https://script.google.com/macros/s/AKfycbz49BTqBw4hmCZUnLF4leWj2nUGel4_R7VzXMQ-zusc7Gi02Z1bEgeJKEe8VDxocbtf/exec",
 ];
 
