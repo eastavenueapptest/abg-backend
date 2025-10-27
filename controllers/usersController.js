@@ -262,12 +262,11 @@ exports.handleSendGeneratekey = async (request, response, next) => {
         .status(500)
         .json({ error: "Failed to update secret key in DB" });
     }
-    response
-      .status(200)
-      .json({
-        message: "Temporary key generated successfully",
-        data: updatedData?.key,
-      });
+    response.status(200).json({
+      message: "Temporary key generated successfully",
+      key: updatedData?.key,
+      username: updatedData?.username,
+    });
   } catch (error) {
     console.error("Email error:", error);
     next(error);
