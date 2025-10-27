@@ -367,8 +367,8 @@ class User extends Position {
     );
     return isMatched ? filteredRows[0] : false;
   }
-  static async viewBySecretKey(secretkey, data) {
-    const targetkey = secretkey;
+  static async viewBySecretKey(key, data) {
+    const targetkey = key;
     const inputData = data;
 
     if (!targetkey || typeof inputData?.password !== "string") {

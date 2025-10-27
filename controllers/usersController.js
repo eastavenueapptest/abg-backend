@@ -234,8 +234,8 @@ exports.handleFetchPhysician = async (request, response, next) => {
 };
 exports.handleResetNewPassword = async (request, response, next) => {
   try {
-    const { secretkey, password } = request.body;
-    const data = await User.viewBySecretKey(secretkey, { password });
+    const { key, password } = request.body;
+    const data = await User.viewBySecretKey(key, { password });
 
     if (data?.changedRows === 1) {
       return response.status(201).json({ success: true });
