@@ -159,7 +159,7 @@ class User extends Position {
     const newKey = await inputData?.key;
     const query = `UPDATE users set users.temp_key='${newKey}' WHERE users.username='${targetUser}'`;
     const [rows, fields] = await database.execute(query);
-    return { rows, key: newKey, username: targetUser };
+    return rows;
   }
   static async usersPosition(id) {
     const targetId = await id;
