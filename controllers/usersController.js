@@ -264,7 +264,10 @@ exports.handleSendGeneratekey = async (request, response, next) => {
     }
     response
       .status(200)
-      .json({ message: "Temporary key generated successfully" });
+      .json({
+        message: "Temporary key generated successfully",
+        data: updatedData?.key,
+      });
   } catch (error) {
     console.error("Email error:", error);
     next(error);
