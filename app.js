@@ -143,7 +143,6 @@ const allowedOrigins = [
   "capacitor://localhost",
   "http://0.0.0.0",
   "ionic://localhost",
-  "https://abgp-frontend-production.up.railway.app",
   "https://abg-frontend.onrender.com",
   "https://eastavenueapptest.github.io/abgp-frontend",
   "https://eastavenueapptest.github.io",

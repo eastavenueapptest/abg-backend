@@ -154,12 +154,12 @@ class User extends Position {
     const [rows, fields] = await database.execute(query);
     return rows;
   }
-  static async setupSecretKey(id, data) {
-    const targetId = await id;
-    const inputData = await data;
-    const query = `UPDATE users set users.temp_key='${inputData.key}' WHERE users.username='${targetId}'`;
+  static async setupSecretKey(username, inputData) {
+    const targetUser = await username;
+    const newKey = await inputData?.key;
+    const query = `UPDATE users set users.temp_key='${newKey}' WHERE users.username='${targetUser}'`;
     const [rows, fields] = await database.execute(query);
-    return rows;
+    return { rows, key: newKey, username: targetUser };
   }
   static async usersPosition(id) {
     const targetId = await id;
