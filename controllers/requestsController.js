@@ -50,6 +50,18 @@ exports.handleNewMedicalTest = async (request, response, next) => {
       fio2Route,
       ward,
     } = request.body;
+
+    const errorFields = {};
+
+    if (!patientName) errorFields.patientName = "patient name is required";
+    if (!age) errorFields.age = "age is required";
+    if (!sex) errorFields.sex = "sex is required";
+    if (!diagnosis) errorFields.diagnosis = "diagnosis is required";
+    if (!requestor) errorFields.requestor = "requestor is required";
+    if (!physician) errorFields.requestor = "physician is required";
+    if (!fio2Route) errorFields.fio2Route = "fio2Route is required";
+    if (!ward) errorFields.ward = "ward is required";
+
     const inputs = new MedicalTest(
       patientName,
       age,
@@ -61,35 +73,15 @@ exports.handleNewMedicalTest = async (request, response, next) => {
       ward
     );
 
-    if (
-      !patientName ||
-      !age ||
-      !sex ||
-      !diagnosis ||
-      !physician ||
-      !requestor ||
-      !fio2Route ||
-      !ward
-    ) {
-      return response.status(400).json({ message: "All fields are required." });
+    if (Object.keys(errorFields).length > 0) {
+      return response.status(400).json({
+        message: "Some required fields are missing.",
+        errorFields,
+      });
     }
+
     const data = await inputs.save();
 
-    const mailOptions = {
-      from: process.env.NODE_APP_GOOGLE_EMAIL,
-      to: "anne.she00@gmail.com",
-      subject: "Requesting for ABG Test",
-      template: "notifyIncomingRequest",
-      context: {
-        patient_name: patientName,
-      },
-    };
-    transporter.sendMail(mailOptions, (error, info) => {
-      if (error) {
-        return console.log(error);
-      }
-      console.log("Message sent: " + info.response);
-    });
     response.status(201).json(data);
   } catch (error) {
     console.error("Error creating user:", error);
