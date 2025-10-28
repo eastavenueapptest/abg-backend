@@ -58,7 +58,7 @@ exports.handleNewMedicalTest = async (request, response, next) => {
     if (!sex) errorFields.sex = "sex is required";
     if (!diagnosis) errorFields.diagnosis = "diagnosis is required";
     if (!requestor) errorFields.requestor = "requestor is required";
-    if (!physician) errorFields.requestor = "physician is required";
+    if (!physician) errorFields.physician = "physician is required";
     if (!fio2Route) errorFields.fio2Route = "fio2Route is required";
     if (!ward) errorFields.ward = "ward is required";
 
