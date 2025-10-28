@@ -140,6 +140,7 @@ const allowedOrigins = [
   "http://localhost:3000",
   "http://localhost:8100",
   "https://localhost",
+  "http://localhost:5173",
   "capacitor://localhost",
   "http://0.0.0.0",
   "ionic://localhost",
