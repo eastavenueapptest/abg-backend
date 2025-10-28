@@ -105,6 +105,7 @@ exports.handleUpdateUserById = async (request, response, next) => {
       emailAddress,
       referenceUsername: referenceUser[0]?.username,
       referenceEmailAddress: referenceUser[0]?.email_address,
+      referenceEmployeeNumber: referenceUser[0]?.employee_number,
     };
     const data = await User.updateById(id, newData);
 

@@ -22,8 +22,8 @@ class User extends Position {
   }
   async save() {
     const [checkDuplicateRows] = await database.execute(
-      `SELECT username, email_address FROM users WHERE username = ? OR email_address = ?`,
-      [this.username, this.emailAddress]
+      `SELECT username, email_address FROM users WHERE username = ? OR email_address = ? OR employee_number = ?`,
+      [this.username, this.emailAddress, this.employeeNumber]
     );
     const duplicateFields = {};
     checkDuplicateRows.forEach((row) => {
@@ -32,6 +32,9 @@ class User extends Position {
       }
       if (row.email_address === this.emailAddress) {
         duplicateFields.emailAddress = "email address is already exists";
+      }
+      if (row.employeeNumber === this.employeeNumber) {
+        duplicateFields.emailAddress = "employee number is already exists";
       }
     });
 
@@ -120,26 +123,40 @@ class User extends Position {
     return null;
   }
   static async updateById(id, data) {
-    const targetId = await id;
-    const inputData = await data;
+    const targetId = id;
+    const inputData = data;
     const duplicateFields = {};
 
-    if (inputData.referenceUsername !== inputData.username) {
-      const [rows] = await database.execute(
-        `SELECT username FROM users WHERE username = ?`,
-        [inputData.username]
-      );
-      if (rows.length > 0) {
-        duplicateFields.username = "Username already exists";
-      }
-    }
-    if (inputData.referenceEmailAddress !== inputData.emailAddress) {
-      const [rows] = await database.execute(
-        `SELECT email_address FROM users WHERE email_address = ?`,
-        [inputData.emailAddress]
-      );
-      if (rows.length > 0) {
-        duplicateFields.emailAddress = "Email address already exists";
+    const checks = [
+      {
+        field: "username",
+        reference: "referenceUsername",
+        column: "username",
+        message: "Username already exists",
+      },
+      {
+        field: "emailAddress",
+        reference: "referenceEmailAddress",
+        column: "email_address",
+        message: "Email address already exists",
+      },
+      {
+        field: "employeeNumber",
+        reference: "referenceEmployeeNumber",
+        column: "employee_number",
+        message: "Employee number already exists",
+      },
+    ];
+
+    for (const { field, reference, column, message } of checks) {
+      if (inputData[reference] !== inputData[field]) {
+        const [rows] = await database.execute(
+          `SELECT ${column} FROM users WHERE ${column} = ?`,
+          [inputData[field]]
+        );
+        if (rows.length > 0) {
+          duplicateFields[field] = message;
+        }
       }
     }
 
@@ -150,10 +167,32 @@ class User extends Position {
       };
     }
 
-    const query = `UPDATE users set users.username='${inputData.username}', users.employee_name='${inputData.employeeName}',users.employee_number='${inputData.employeeNumber}', users.position_id='${inputData.positionId}', users.email_address='${inputData.emailAddress}'  WHERE users.id=${targetId}`;
-    const [rows, fields] = await database.execute(query);
-    return rows;
+    const query = `
+    UPDATE users
+    SET 
+      username = ?,
+      employee_name = ?,
+      employee_number = ?,
+      position_id = ?,
+      email_address = ?
+    WHERE id = ?
+  `;
+
+    const [rows] = await database.execute(query, [
+      inputData.username,
+      inputData.employeeName,
+      inputData.employeeNumber,
+      inputData.positionId,
+      inputData.emailAddress,
+      targetId,
+    ]);
+
+    return {
+      success: true,
+      affectedRows: rows.affectedRows,
+    };
   }
+
   static async setupSecretKey(username, inputData) {
     const targetUser = await username;
     const newKey = await inputData?.key;
