@@ -131,13 +131,13 @@ exports.handleUpdateMedicalTestById = async (request, response, next) => {
     }
 
     const newData = {
-      patientName: incomingwData.patient_name,
-      sex: incomingwData.sex,
-      diagnosis: incomingwData.diagnosis,
-      age: incomingwData.age,
-      physician: incomingwData.physician_id,
-      fio2Route: incomingwData.fio2_route,
-      ward: incomingwData.ward,
+      patientName,
+      sex,
+      diagnosis,
+      age,
+      physician,
+      fio2Route,
+      ward,
     };
     const data = await MedicalTest.updateById(id, newData);
     response.status(201).json(data);
