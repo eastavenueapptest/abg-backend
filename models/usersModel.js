@@ -22,7 +22,7 @@ class User extends Position {
   }
   async save() {
     const [checkDuplicateRows] = await database.execute(
-      `SELECT username, email_address FROM users WHERE username = ? OR email_address = ? OR employee_number = ?`,
+      `SELECT username, email_address, employee_number FROM users WHERE username = ? OR email_address = ? OR employee_number = ?`,
       [this.username, this.emailAddress, this.employeeNumber]
     );
     const duplicateFields = {};
