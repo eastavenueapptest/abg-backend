@@ -101,7 +101,35 @@ exports.handleFetchMedicalTestById = async (request, response, next) => {
 exports.handleUpdateMedicalTestById = async (request, response, next) => {
   try {
     const { id } = request.params;
-    const incomingwData = request.body;
+    const {
+      patientName,
+      age,
+      sex,
+      diagnosis,
+      requestor,
+      physician,
+      fio2Route,
+      ward,
+    } = request.body;
+
+    const errorFields = {};
+
+    if (!patientName) errorFields.patientName = "patient name is required";
+    if (!age) errorFields.age = "age is required";
+    if (!sex) errorFields.sex = "sex is required";
+    if (!diagnosis) errorFields.diagnosis = "diagnosis is required";
+    if (!requestor) errorFields.requestor = "requestor is required";
+    if (!physician) errorFields.physician = "physician is required";
+    if (!fio2Route) errorFields.fio2Route = "fio2Route is required";
+    if (!ward) errorFields.ward = "ward is required";
+
+    if (Object.keys(errorFields).length > 0) {
+      return response.status(400).json({
+        message: "Some required fields are missing.",
+        errorFields,
+      });
+    }
+
     const newData = {
       patientName: incomingwData.patient_name,
       sex: incomingwData.sex,
