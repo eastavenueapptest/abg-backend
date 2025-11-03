@@ -33,7 +33,7 @@ class User extends Position {
       if (row.email_address === this.emailAddress) {
         duplicateFields.emailAddress = "email address is already exists";
       }
-      if (row.employeeNumber === this.employeeNumber) {
+      if (row.employee_number === this.employeeNumber) {
         duplicateFields.emailAddress = "employee number is already exists";
       }
     });
