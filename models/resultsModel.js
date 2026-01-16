@@ -178,14 +178,17 @@ class Result {
         results.extracted_text, 
         results.interpreted_by,
         results.interpreted_message,
+       
         DATE_FORMAT(
-     results.date_created,
-        '%m/%d/%Y'
+          DATE_ADD(results.date_created, INTERVAL 16 HOUR),
+          '%c/%e/%Y'
         ) AS date,
-          TIME_FORMAT(
-     results.date_created,
-        '%h:%i %p'
+
+        TIME_FORMAT(
+          DATE_ADD(results.date_created, INTERVAL 16 HOUR),
+            '%l:%i %p'
         ) AS time,
+
         medical_requests.patient_name,
         medical_requests.age,
         medical_requests.sex,
