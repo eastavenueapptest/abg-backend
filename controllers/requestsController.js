@@ -1,5 +1,4 @@
 const MedicalTest = require("../models/requestsModel");
-const transporter = require("../utils/emailUtils");
 require("dotenv").config();
 
 exports.handleUpdateStatusRequest = async (request, response, next) => {

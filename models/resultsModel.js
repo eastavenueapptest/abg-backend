@@ -17,7 +17,7 @@ class Result {
 
   async save() {
     const [maxRows] = await database.execute(
-      `SELECT MAX(id) AS max_id FROM results`
+      `SELECT MAX(id) AS max_id FROM results`,
     );
     const newId = (maxRows[0].max_id || 0) + 1;
 
@@ -82,50 +82,28 @@ class Result {
 
   static async findAll({ date = {}, sorting = "desc" } = {}) {
     let whereClause = "";
-
-    function normalizeDateTime(str) {
-      if (!str) return null;
-      const parts = str.replace("T", " ").split(":");
-      if (parts.length === 2) {
-        return str.replace("T", " ") + ":00";
-      }
-      return str.replace("T", " ");
-    }
-
-    function addOneMinute(dateTimeStr) {
-      const [datePart, timePart] = dateTimeStr.split(" ");
-      const [year, month, day] = datePart.split("-").map(Number);
-      const [hour, minute, second] = timePart.split(":").map(Number);
-
-      const d = new Date(year, month - 1, day, hour, minute, second);
-      d.setMinutes(d.getMinutes() + 1); // ✅ add one minute
-
-      const yyyy = d.getFullYear();
-      const mm = String(d.getMonth() + 1).padStart(2, "0");
-      const dd = String(d.getDate()).padStart(2, "0");
-      const hh = String(d.getHours()).padStart(2, "0");
-      const mi = String(d.getMinutes()).padStart(2, "0");
-      const ss = String(d.getSeconds()).padStart(2, "0");
-
-      return `${yyyy}-${mm}-${dd} ${hh}:${mi}:${ss}`;
-    }
-
     const params = [];
+
+    function formatDateTimeForMySQL(dateTimeStr, adjustOneMinute) {
+      const d = new Date(dateTimeStr);
+      if (adjustOneMinute == true) {
+        d.setHours(d.getHours() - 8);
+        d.setMinutes(d.getMinutes() + 1);
+      }
+      return d.toISOString().slice(0, 19).replace("T", " ");
+    }
+    console.log("before", date.from, date.to);
+
     if (date.from && date.to) {
-      const from = normalizeDateTime(date?.from);
-      const to = normalizeDateTime(date?.to);
-
-      console.log("before", from, to);
-
-      whereClause = `
-      WHERE DATE_FORMAT(CONVERT_TZ(results.date_created, '+00:00', '+08:00'), '%Y-%m-%d %H:%i:%s') >= ?
-        AND DATE_FORMAT(CONVERT_TZ(results.date_created, '+00:00', '+08:00'), '%Y-%m-%d %H:%i:%s') < ?
-    `;
-
-      params.push(from, addOneMinute(to));
+      const from = formatDateTimeForMySQL(date.from);
+      const to = formatDateTimeForMySQL(date.to, true);
+      whereClause = `WHERE results.date_created >= ? AND results.date_created < ?`;
+      params.push(from, to);
+      console.log("after", from, to);
     }
 
     const sortDirection = sorting.toLowerCase() === "asc" ? "ASC" : "DESC";
+
     const query = `
     SELECT  
       results.id, 
@@ -133,21 +111,27 @@ class Result {
       results.date_created,
 
       DATE_FORMAT(
-      CONVERT_TZ(medical_requests.date_created, '+00:00', '+08:00'),
-        '%m/%d/%Y'
+        DATE_ADD(medical_requests.date_created, INTERVAL 16 HOUR),
+        '%c/%e/%Y %l:%i %p'
       ) AS medical_requests_date_created_formatted,
 
       TIME_FORMAT(
-        CONVERT_TZ(medical_requests.date_created, '+00:00', '+08:00'),
-        '%h:%i %p'
+        DATE_ADD(results.date_created, INTERVAL 16 HOUR),
+        '%l:%i %p'
       ) AS medical_requests_time_only,
 
       DATE_FORMAT(
-        CONVERT_TZ(results.date_created, '+00:00', '+08:00'),
-        '%m/%d/%Y %h:%i %p'
+        DATE_ADD(results.date_created, INTERVAL 16 HOUR),
+        '%c/%e/%Y %l:%i %p'
       ) AS results_date_created_formatted,
-       
-      TIME_FORMAT(SEC_TO_TIME(TIMESTAMPDIFF(SECOND, medical_requests.date_created, results.date_created)), '%H:%i') AS turnaround_time_hh_mm,
+
+      TIME_FORMAT(
+        SEC_TO_TIME(
+          TIMESTAMPDIFF(SECOND, medical_requests.date_created, results.date_created)
+        ),
+        '%H:%i'
+      ) AS turnaround_time_hh_mm,
+
       results.extracted_text, 
       results.interpreted_by,
       results.interpreted_message,        
@@ -164,6 +148,7 @@ class Result {
       a.employee_name AS requestor,
       b.employee_name AS physician_doctor,
       c.employee_name AS respiratory_therapists
+
     FROM results 
     JOIN medical_requests ON results.request_id = medical_requests.id 
     JOIN users AS a ON medical_requests.requestor_id = a.id 
@@ -171,10 +156,10 @@ class Result {
     JOIN users AS c ON medical_requests.rt_id = c.id 
     JOIN machines ON results.machine_id = machines.id
     ${whereClause}
-    ORDER BY medical_requests.date_created ${sortDirection}
+    ORDER BY medical_requests.date_created ${sortDirection};
   `;
 
-    const [rows, fields] = await database.execute(query, params);
+    const [rows] = await database.execute(query, params);
 
     const filteredRows = rows.map((item) => ({
       ...item,
@@ -194,11 +179,11 @@ class Result {
         results.interpreted_by,
         results.interpreted_message,
         DATE_FORMAT(
-        CONVERT_TZ(results.date_created, '+00:00', '+08:00'),
+     results.date_created,
         '%m/%d/%Y'
         ) AS date,
           TIME_FORMAT(
-        CONVERT_TZ(results.date_created, '+00:00', '+08:00'),
+     results.date_created,
         '%h:%i %p'
         ) AS time,
         medical_requests.patient_name,

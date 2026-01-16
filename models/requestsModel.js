@@ -9,7 +9,7 @@ class MedicalTest {
     requestor,
     physician,
     fio2Route,
-    ward
+    ward,
   ) {
     this.patientName = patientName;
     this.age = age;
@@ -22,7 +22,7 @@ class MedicalTest {
   }
   async save() {
     const [maxRows] = await database.execute(
-      `SELECT MAX(id) AS max_id FROM medical_requests`
+      `SELECT MAX(id) AS max_id FROM medical_requests`,
     );
     const newId = (maxRows[0].max_id || 0) + 1;
 
@@ -100,8 +100,20 @@ class MedicalTest {
   }
 
   static async findAll() {
-    const query = `SELECT medical_requests.*,  DATE_FORMAT(medical_requests.date_created, '%m/%d/%Y') AS date_created_formatted FROM medical_requests ORDER BY medical_requests.date_created DESC`;
-    const [rows, fields] = await database.execute(query);
+    const query = `
+    SELECT 
+    medical_requests.*,
+    DATE_FORMAT(
+      DATE_ADD(medical_requests.date_created, INTERVAL 16 HOUR),
+      '%c/%e/%Y %l:%i %p'
+    ) AS date_created_formatted
+    FROM medical_requests
+    ORDER BY medical_requests.date_created DESC
+  `;
+
+    const [rows] = await database.execute(query);
+
+    console.log(rows.find((item) => item.id == 35));
 
     return rows;
   }

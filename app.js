@@ -204,10 +204,6 @@ app.use(
   `/api/${process.env.NODE_APP_API_RESULTS}`,
   require("./routes/resultsRoutes")
 );
-app.use(
-  `/api/${process.env.NODE_APP_API_EMAILS}`,
-  require("./routes/emailsRoutes")
-);
 
 app.use(
   `/api/${process.env.NODE_APP_API_MACHINES}`,
