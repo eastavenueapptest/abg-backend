@@ -111,17 +111,26 @@ class Result {
       results.date_created,
 
       DATE_FORMAT(
-        DATE_ADD(medical_requests.date_created, INTERVAL 16 HOUR),
+        DATE_SUB(
+          DATE_ADD(medical_requests.date_created, INTERVAL 16 HOUR),
+          INTERVAL 2 MINUTE
+        ),
         '%c/%e/%Y %l:%i %p'
       ) AS medical_requests_date_created_formatted,
 
       TIME_FORMAT(
-        DATE_ADD(results.date_created, INTERVAL 16 HOUR),
+        DATE_SUB(
+          DATE_ADD(medical_requests.date_created, INTERVAL 16 HOUR),
+          INTERVAL 2 MINUTE
+        ),
         '%l:%i %p'
       ) AS medical_requests_time_only,
 
       DATE_FORMAT(
-        DATE_ADD(results.date_created, INTERVAL 16 HOUR),
+        DATE_SUB(
+          DATE_ADD(medical_requests.date_created, INTERVAL 16 HOUR),
+          INTERVAL 2 MINUTE
+        ),
         '%c/%e/%Y %l:%i %p'
       ) AS results_date_created_formatted,
 
@@ -180,13 +189,19 @@ class Result {
         results.interpreted_message,
        
         DATE_FORMAT(
-          DATE_ADD(results.date_created, INTERVAL 16 HOUR),
+          DATE_SUB(
+            DATE_ADD(medical_requests.date_created, INTERVAL 16 HOUR),
+            INTERVAL 2 MINUTE
+          ),
           '%c/%e/%Y'
         ) AS date,
 
         TIME_FORMAT(
-          DATE_ADD(results.date_created, INTERVAL 16 HOUR),
-            '%l:%i %p'
+          DATE_SUB(
+            DATE_ADD(medical_requests.date_created, INTERVAL 16 HOUR),
+            INTERVAL 2 MINUTE
+          ),
+          '%l:%i %p'
         ) AS time,
 
         medical_requests.patient_name,

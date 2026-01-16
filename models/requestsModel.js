@@ -104,7 +104,7 @@ class MedicalTest {
     SELECT 
     medical_requests.*,
     DATE_FORMAT(
-      DATE_ADD(medical_requests.date_created, INTERVAL 16 HOUR),
+      DATE_ADD(medical_requests.date_created,INTERVAL 16 HOUR) - INTERVAL 1 MINUTE,
       '%c/%e/%Y %l:%i %p'
     ) AS date_created_formatted
     FROM medical_requests
